@@ -1,0 +1,11 @@
+[33mcommit 848fd84aaa5a274499c32f88611dc499f8b986c8[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: Deepak Jain <deepakjain2k19@gmail.com>
+Date:   Thu Jun 20 13:11:39 2024 +0530
+
+    init redux and setup userreducers and actions
+
+[33mcommit 2e0aff561a5f070b713237f26d6a297750deada3[m
+Author: Deepak Jain <deepakjain2k19@gmail.com>
+Date:   Thu Jun 20 09:39:20 2024 +0530
+
+    reactts tailwind init
