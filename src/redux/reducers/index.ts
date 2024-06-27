@@ -1,12 +1,10 @@
-// reducers/index.ts
+// src/redux/reducers/rootReducer.ts
 import { combineReducers } from '@reduxjs/toolkit'
-import userReducer from './userReducer'
-// import postReducer from './postReducer';
+import userReducer from './authReducer'
+// import counterReducer from './counterReducer';
 
 const rootReducer = combineReducers({
   user: userReducer
-  // posts: postReducer,
 })
 
-export type RootState = ReturnType<typeof rootReducer>
 export default rootReducer

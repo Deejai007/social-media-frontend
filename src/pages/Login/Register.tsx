@@ -2,13 +2,16 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { register } from '../../redux/actions/userActions'
-import { RootState } from '../../redux/store/store'
+import { User } from '../../redux/types/user'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch } from 'redux/store/store'
 
 interface Props {
   registerUser: (userData: any) => void
 }
 
 const SignUp: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch()
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -23,17 +26,15 @@ const SignUp: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     console.log(formData)
-
-    // register(formData) // Dispatch register action with form data
-    try {
-      const result = await register(formData)
-      console.log('Registration successful:', result) // Access the result of the dispatch
-      // Handle further actions after successful registration
-    } catch (error) {
-      console.error('Registration failed:', error) // Handle the error thrown from the action creator
-      // Handle error scenarios in your UI
+    const result = await dispatch(
+      register({ email: email, password: password })
+    )
+    console.log(result)
+    if (result.payload.success) {
+      console.log('Successfully sent the mail')
     }
   }
+
   return (
     <div className="h-screen bg-gray-100 text-gray-900 flex justify-center ">
       <div className="max-w-screen-xl  m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
@@ -107,7 +108,7 @@ const SignUp: React.FC = () => {
                   </button>
                   <p className="mt-4 text-xs text-gray-600 text-center">
                     Already registered?
-                    <span className="underline text-lg">
+                    <span className="underline text-base">
                       <Link to="/login">Login</Link>
                     </span>
                   </p>
@@ -129,5 +130,4 @@ const SignUp: React.FC = () => {
     </div>
   )
 }
-
 export default connect(null, { register })(SignUp)

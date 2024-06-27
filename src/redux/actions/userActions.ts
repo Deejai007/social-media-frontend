@@ -1,156 +1,116 @@
-// src/redux/actions/userActions.ts
-import axiosInstance from '../../utils/axiosconfig'
-import {
-  USER_REGISTER_REQUEST,
-  USER_REGISTER_SUCCESS,
-  USER_REGISTER_FAIL,
-  USER_VERIFY_REQUEST,
-  USER_VERIFY_SUCCESS,
-  USER_VERIFY_FAIL,
-  USER_SEND_OTP_REQUEST,
-  USER_SEND_OTP_SUCCESS,
-  USER_SEND_OTP_FAIL,
-  USER_LOGIN_REQUEST,
-  USER_LOGIN_SUCCESS,
-  USER_LOGIN_FAIL,
-  USER_FORGOT_SEND_OTP_REQUEST,
-  USER_FORGOT_SEND_OTP_SUCCESS,
-  USER_FORGOT_SEND_OTP_FAIL,
-  USER_RESET_PASSWORD_REQUEST,
-  USER_RESET_PASSWORD_SUCCESS,
-  USER_RESET_PASSWORD_FAIL
-} from './actionTypes'
-import { Dispatch } from 'redux'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import axios from 'axios'
+import axiosApi from 'utils/axiosconfig'
+import { UserState } from 'redux/types/user'
 
-// Define User Data Types
-interface UserData {
-  name: string
-  email: string
-  password: string
+const initialState: UserState = {
+  user: null,
+  loading: false,
+  error: null,
+  successMessage: null
 }
 
-interface VerificationData {
-  userId: string
-  code: string
-}
-
-interface OTPData {
-  userId: string
-}
-
-interface LoginData {
-  email: string
-  password: string
-}
-
-interface EmailData {
-  email: string
-}
-
-interface ResetData {
-  userId: string
-  newPassword: string
-}
-
-// Define Action Types
-interface UserRegisterRequestAction {
-  type: typeof USER_REGISTER_REQUEST
-}
-
-interface UserRegisterSuccessAction {
-  type: typeof USER_REGISTER_SUCCESS
-  payload: any // Adjust payload type based on your API response
-}
-
-interface UserRegisterFailAction {
-  type: typeof USER_REGISTER_FAIL
-  payload: string
-}
-
-// Combine action types using a union type
-type UserActionTypes =
-  | UserRegisterRequestAction
-  | UserRegisterSuccessAction
-  | UserRegisterFailAction
-
-// Register User Action
-export const register =
-  (userData: UserData) => async (dispatch: Dispatch<UserActionTypes>) => {
-    dispatch({ type: USER_REGISTER_REQUEST })
-
+// Async actions
+export const getUser = createAsyncThunk(
+  'user/getUser',
+  async (token: string, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post(
-        'http://localhost:8967/user/register',
-        userData
-      )
-
-      dispatch({
-        type: USER_REGISTER_SUCCESS,
-        payload: response.data
+      const response = await axiosApi.post('/user/register', {
+        headers: { Authorization: token }
       })
-    } catch (error) {
-      dispatch({
-        type: USER_REGISTER_FAIL,
-        payload: error.response?.data?.message || 'Failed to register'
-      })
-      throw error
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message)
     }
   }
+)
 
-// Verify User Action
-export const verify =
-  (verificationData: VerificationData) => async (dispatch: Dispatch) => {
-    dispatch({ type: USER_VERIFY_REQUEST })
-
+export const register = createAsyncThunk(
+  'user/register',
+  async (
+    userData: {
+      email: string
+      password: string
+    },
+    { rejectWithValue }
+  ) => {
     try {
-      // Implement your verification logic
-    } catch (error) {
-      // Handle errors
+      console.log('API call start')
+
+      const response = await axiosApi.post('/user/register', userData)
+      console.log(response.data)
+      return response.data
+    } catch (error: any) {
+      console.log(error.response.data)
+      return rejectWithValue(error.response.data.message)
     }
   }
-
-// Send OTP Action
-export const sendOTP = (otpData: OTPData) => async (dispatch: Dispatch) => {
-  dispatch({ type: USER_SEND_OTP_REQUEST })
-
-  try {
-    // Implement send OTP logic
-  } catch (error) {
-    // Handle errors
-  }
-}
-
-// Login User Action
-export const login = (loginData: LoginData) => async (dispatch: Dispatch) => {
-  dispatch({ type: USER_LOGIN_REQUEST })
-
-  try {
-    // Implement login logic
-  } catch (error) {
-    // Handle errors
-  }
-}
-
-// Forgot Password - Send OTP Action
-export const forgotSendOTP =
-  (emailData: EmailData) => async (dispatch: Dispatch) => {
-    dispatch({ type: USER_FORGOT_SEND_OTP_REQUEST })
-
+)
+export const verify = createAsyncThunk(
+  'user/verify',
+  async (
+    verificationData: { email: string; otp: string },
+    { rejectWithValue }
+  ) => {
     try {
-      // Implement send OTP for forgot password logic
-    } catch (error) {
-      // Handle errors
+      const response = await axios.post('/api/verify', verificationData)
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message)
     }
   }
+)
 
-// Forgot Password - Reset Password Action
-export const forgotResetPassword =
-  (resetData: ResetData) => async (dispatch: Dispatch) => {
-    dispatch({ type: USER_RESET_PASSWORD_REQUEST })
-
+export const sendOtp = createAsyncThunk(
+  'user/sendOtp',
+  async (email: string, { rejectWithValue }) => {
     try {
-      // Implement reset password logic
-    } catch (error) {
-      // Handle errors
+      const response = await axios.post('/api/sendotp', { email })
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message)
     }
   }
+)
+
+export const login = createAsyncThunk(
+  'user/login',
+  async (
+    credentials: { email: string; password: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.post('/api/login', credentials)
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message)
+    }
+  }
+)
+
+export const forgotSendOtp = createAsyncThunk(
+  'user/forgotSendOtp',
+  async (email: string, { rejectWithValue }) => {
+    try {
+      const response = await axios.post('/api/forgotsendotp', { email })
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message)
+    }
+  }
+)
+
+export const forgotResetPassword = createAsyncThunk(
+  'user/forgotResetPassword',
+  async (
+    resetData: { email: string; otp: string; newPassword: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.post('/api/forgotresetPassword', resetData)
+      return response.data
+    } catch (error: any) {
+      return rejectWithValue(error.response.data.message)
+    }
+  }
+)
