@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import { register } from '../../redux/actions/userActions'
-import { User } from '../../redux/types/user'
+import { register } from '../redux/actions/userActions'
+import { User } from '../redux/types/user'
 import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch } from 'redux/store/store'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { AppDispatch, RootState } from 'redux/store/store'
 
 interface Props {
   registerUser: (userData: any) => void
@@ -12,6 +14,9 @@ interface Props {
 
 const SignUp: React.FC = () => {
   const dispatch: AppDispatch = useDispatch()
+  const useSelector: RootState = useDispatch()
+  const navigate = useNavigate()
+
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -29,9 +34,21 @@ const SignUp: React.FC = () => {
     const result = await dispatch(
       register({ email: email, password: password })
     )
-    console.log(result)
     if (result.payload.success) {
-      console.log('Successfully sent the mail')
+      console.log(result.payload.message)
+      toast.success(result.payload.message, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'light'
+      })
+      navigate('/verify')
+    } else {
+      console.log(result.payload.message)
     }
   }
 

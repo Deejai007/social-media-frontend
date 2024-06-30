@@ -42,10 +42,11 @@ export const register = createAsyncThunk(
       return response.data
     } catch (error: any) {
       console.log(error.response.data)
-      return rejectWithValue(error.response.data.message)
+      return rejectWithValue(error.response.data)
     }
   }
 )
+
 export const verify = createAsyncThunk(
   'user/verify',
   async (

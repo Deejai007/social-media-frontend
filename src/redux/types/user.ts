@@ -1,7 +1,20 @@
+// export interface User {
+//   username: string
+//   email: string
+//   password: string
+// }
+
 export interface User {
-  username: string
-  email: string
-  password: string
+  about: string | null
+  firstName: string | null
+  id: number | null
+  lastName: string | null
+  profileImage: string | null
+  updatedAt: string | null
+  createdAt: string | null
+  username: string | null
+  verified: boolean
+  location: string | null
 }
 
 export interface UserState {
