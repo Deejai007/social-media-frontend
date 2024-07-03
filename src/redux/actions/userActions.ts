@@ -103,22 +103,22 @@ export const forgotPassword = createAsyncThunk(
 
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue(error.response.data);
     }
   },
 );
 
 export const forgotResetPassword = createAsyncThunk(
   "user/forgotResetPassword",
-  async (
-    resetData: { email: string; otp: string; newPassword: string },
-    { rejectWithValue },
-  ) => {
+  async (resetData: object, { rejectWithValue }) => {
     try {
-      const response = await axios.post("/api/forgotresetPassword", resetData);
+      const response = await axiosApi.post(
+        "/user/forgotresetPassword",
+        resetData,
+      );
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response.data.message);
+      return rejectWithValue(error.response.data);
     }
   },
 );
