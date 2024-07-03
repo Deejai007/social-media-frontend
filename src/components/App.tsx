@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import SignUp from '../pages/Register'
 import Verify from '../pages/Verify'
 import Home from '../pages/Home'
+import ForgotPassword from 'pages/ForgotPassword'
 // import SignUp from '../pages/Register'
 function App() {
   return (
@@ -26,9 +27,11 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/verify" element={<Verify />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>
       </Router>
     </div>

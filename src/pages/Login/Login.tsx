@@ -1,14 +1,68 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { FiLogIn } from 'react-icons/fi'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { login } from "../../redux/actions/userActions";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AppDispatch, RootState } from "redux/store/store";
 
-const Login: React.FC = () => {
+const SignUp: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const { email, password } = formData;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(formData);
+    const result = await dispatch(login({ email: email, password: password }));
+    if (result.payload.success) {
+      console.log(result.payload.message);
+      toast.success("Logged in!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      navigate("/home");
+    } else {
+      console.log(result.payload.message);
+
+      toast.error(result.payload.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    }
+  };
+
   return (
     <div className="h-screen bg-gray-100 text-gray-900 flex justify-center ">
       <div className="max-w-screen-xl  m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-4 flex justify-center items-center">
           <div className=" flex flex-col items-center bg-gray-100 rounded p-12">
-            <h1 className="text-2xl xl:text-3xl font-extrabold ">Login</h1>
+            <h1 className="text-2xl xl:text-3xl font-extrabold ">
+              Welcome back!
+            </h1>
             <div className="w-full flex-1 mt-8">
               <div className="flex flex-col items-center">
                 <button className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline">
@@ -38,35 +92,55 @@ const Login: React.FC = () => {
 
               <div className="my-6 border-b text-center">
                 <div className="leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2">
-                  Or login with e-mail
+                  Or Login with e-mail
                 </div>
               </div>
-
-              <div className="mx-auto max-w-xs">
-                <input
-                  className="w-full px-8 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                  type="email"
-                  placeholder="Email"
-                />
-                <input
-                  className="w-full px-8 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
-                  type="password"
-                  placeholder="Password"
-                />
-                <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
-                  <span className="text-xl">
-                    <FiLogIn />
-                  </span>
-
-                  <span className="ml-3">Login</span>
-                </button>
-                <p className="mt-4 text-xs text-gray-600 text-center">
-                  New user?
-                  <p className="underline text-lg">
-                    <Link to="/signup">Sign up</Link>
+              <form onSubmit={handleSubmit}>
+                <div className="mx-auto max-w-xs">
+                  <input
+                    className="w-full px-8 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                    type="email"
+                    placeholder="Email"
+                    name="email"
+                    value={email}
+                    onChange={handleChange}
+                  />
+                  <input
+                    className="w-full px-8 py-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    value={password}
+                    onChange={handleChange}
+                  />
+                  <Link to="/forgot-password">
+                    <p className="underline text-secondary px-2">
+                      Forgot password?
+                    </p>
+                  </Link>
+                  <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
+                    <svg
+                      className="w-6 h-6 -ml-2"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                      <circle cx="8.5" cy="7" r="4" />
+                      <path d="M20 8v6M23 11h-6" />
+                    </svg>
+                    <span className="ml-3">Login</span>
+                  </button>
+                  <p className="mt-4 text-sm text-gray-600 text-center">
+                    New user? &nbsp;
+                    <span className="underline text-base">
+                      <Link to="/signup">Signup</Link>
+                    </span>
                   </p>
-                </p>
-              </div>
+                </div>
+              </form>
             </div>
           </div>
         </div>
@@ -75,13 +149,12 @@ const Login: React.FC = () => {
             className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
             style={{
               backgroundImage:
-                "url('https://storage.googleapis.com/devitary-image-host.appspot.com/15848031292911696601-undraw_designer_life_w96d.svg')"
+                "url('https://storage.googleapis.com/devitary-image-host.appspot.com/15848031292911696601-undraw_designer_life_w96d.svg')",
             }}
           ></div>
         </div>
       </div>
     </div>
-  )
-}
-
-export default Login
+  );
+};
+export default connect(null, { login })(SignUp);

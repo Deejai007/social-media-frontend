@@ -11,6 +11,7 @@ export interface User {
   lastName: string | null
   profileImage: string | null
   updatedAt: string | null
+  email: string | null
   createdAt: string | null
   username: string | null
   verified: boolean

@@ -2,26 +2,24 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { register } from '../redux/actions/userActions'
-import { User } from '../redux/types/user'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { AppDispatch, RootState } from 'redux/store/store'
 
-interface Props {
-  registerUser: (userData: any) => void
-}
+// interface Props {
+//   registerUser: (userData: any) => void
+// }
 
 const SignUp: React.FC = () => {
   const dispatch: AppDispatch = useDispatch()
-  const useSelector: RootState = useDispatch()
+  const user = useSelector((state: RootState) => state.user)
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   })
-
   const { email, password } = formData
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
