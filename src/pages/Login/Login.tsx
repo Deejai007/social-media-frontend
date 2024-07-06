@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { login } from "../../redux/actions/userActions";
 import { useDispatch, useSelector } from "react-redux";
+import { ThreeDots } from "react-loader-spinner";
+
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AppDispatch, RootState } from "redux/store/store";
@@ -10,6 +12,8 @@ import { AppDispatch, RootState } from "redux/store/store";
 const SignUp: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
+  const loading = useSelector((state: RootState) => state.user.loading);
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -119,19 +123,34 @@ const SignUp: React.FC = () => {
                     </p>
                   </Link>
                   <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
-                    <svg
-                      className="w-6 h-6 -ml-2"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                      <circle cx="8.5" cy="7" r="4" />
-                      <path d="M20 8v6M23 11h-6" />
-                    </svg>
-                    <span className="ml-3">Login</span>
+                    {loading ? (
+                      <ThreeDots
+                        visible={true}
+                        height="24"
+                        width="36"
+                        color="white"
+                        radius="8"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                      />
+                    ) : (
+                      <>
+                        <svg
+                          className="w-6 h-6 -ml-2"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                          <circle cx="8.5" cy="7" r="4" />
+                          <path d="M20 8v6M23 11h-6" />
+                        </svg>
+                        <span className="ml-3">Login</span>
+                      </>
+                    )}
                   </button>
                   <p className="mt-4 text-sm text-gray-600 text-center">
                     New user? &nbsp;

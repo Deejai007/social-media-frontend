@@ -105,7 +105,7 @@ const Verify: React.FC<Props> = () => {
         progress: undefined,
         theme: "light",
       });
-      navigate("/home");
+      navigate("/user-deatils");
     } else {
       console.log(result.payload.message);
     }
@@ -120,8 +120,8 @@ const Verify: React.FC<Props> = () => {
               <header className="mb-8">
                 <h1 className="text-2xl font-bold mb-1">Email Verification</h1>
                 <p className="text-[15px] text-slate-500">
-                  Enter the 6-digit verification code that was sent to your
-                  email account.
+                  Before proceeding further, you need to verify your email id{" "}
+                  <span className="font-semibold">{userState.user.email}</span>
                 </p>
               </header>
               {!showOtpForm ? (

@@ -10,12 +10,15 @@ export default {
       fontFamily: {
         yeseva: ["Yeseva One", "cursive"],
         work: ["Work Sans", "sans-serif"],
+        sevillana: ["Sevillana", "cursive"],
         nunito: ["Nunito Sans", "sans-serif"],
       },
       colors: {
-        primary: "#1F2B6C",
+        primary: "rgb(99 102 2241)",
+        // primary: "#3F51B5",
         secondary: "#159EEC",
         accent: "#BFD2F8",
+        mainbg: "rgb(224, 224, 224)",
       },
       backgroundImage: {
         hero: "url('/public/image_assets/hero-bg.JPG')",
@@ -25,15 +28,16 @@ export default {
         "doctor-card": "url('/public/image_assets/DoctorCardImg.jpg')",
       },
       screens: {
-        xs: "480px", // Extra small devices
-        sm: "640px", // Small devices (landscape phones, 576px and up)
-        md: "768px", // Medium devices (tablets, 768px and up)
-        lg: "1024px", // Large devices (desktops, 992px and up)
-        xl: "1280px", // Extra large devices (large desktops, 1200px and up)
-        "2xl": "1536px", // Larger desktops (1440px and up)
-        "3xl": "1600px", // Custom larger desktops
-        "4xl": "1920px", // Full HD desktops and higher
-        "5xl": "2560px", // Ultra-wide screens
+        mob: "320px",
+        xs: "480px",
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1536px",
+        "3xl": "1600px",
+        "4xl": "1920px",
+        "5xl": "2560px",
       },
       spacing: {
         128: "32rem",

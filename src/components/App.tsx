@@ -7,6 +7,7 @@ import Verify from "../pages/Verify";
 import Home from "../pages/Home";
 import ForgotPassword from "pages/ForgotPassword/ForgotPassword";
 import PasswordReset from "pages/ForgotPassword/PasswordReset";
+import CreateProfile from "pages/CreateProfile";
 function App() {
   return (
     <div className="">
@@ -33,6 +34,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/password-reset/:token" element={<PasswordReset />} />
+          <Route path="/create-profile" element={<CreateProfile />} />
         </Routes>
       </Router>
     </div>

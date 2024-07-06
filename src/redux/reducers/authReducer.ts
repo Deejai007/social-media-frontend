@@ -6,6 +6,7 @@ import {
   register,
   sendOtp,
   verify,
+  addUserData,
 } from "redux/actions/userActions";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
@@ -53,6 +54,7 @@ const userSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
+        console.log(action.payload);
         state.successMessage = action.payload.message;
         console.log(action.payload);
 
@@ -98,7 +100,9 @@ const userSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
+        console.log(action.payload);
+
+        state.user = action.payload.data.user;
         state.successMessage = action.payload.msg;
       })
       .addCase(login.rejected, (state, action) => {
@@ -128,6 +132,19 @@ const userSlice = createSlice({
         state.successMessage = action.payload.msg;
       })
       .addCase(forgotResetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      //add user data
+      .addCase(addUserData.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(addUserData.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.msg;
+      })
+      .addCase(addUserData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

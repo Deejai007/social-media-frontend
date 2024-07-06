@@ -85,7 +85,9 @@ export const login = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      const response = await axiosApi.post("/user/login", userData);
+      const response = await axiosApi.post("/user/login", userData, {
+        withCredentials: true,
+      });
       return response.data;
     } catch (error: any) {
       console.log(error.response.data);
@@ -116,6 +118,19 @@ export const forgotResetPassword = createAsyncThunk(
         "/user/forgotresetPassword",
         resetData,
       );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+export const addUserData = createAsyncThunk(
+  "user/addUserData",
+  async (formData: object, { rejectWithValue }) => {
+    try {
+      console.log(formData);
+
+      const response = await axiosApi.post("/user/addUserData", { formData });
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data);
