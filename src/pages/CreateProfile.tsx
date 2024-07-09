@@ -7,13 +7,12 @@ import { ThreeDots } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AppDispatch, RootState } from "redux/store/store";
-import Nav from "./Nav";
+import Nav from "./SideNav";
 import { addUserData } from "redux/actions/userActions";
 
 const CreateProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
-  const [text, setText] = useState("");
   const loading = useSelector((state: RootState) => state.user.loading);
 
   const navigate = useNavigate();
@@ -39,11 +38,8 @@ const CreateProfile: React.FC = () => {
   ) => {
     const { name, value } = e.target;
 
-    if (name == "bio") {
-      if (e.target.value.length <= 100) {
-        setText(e.target.value);
-      } else return;
-    }
+    if (name == "bio") if (e.target.value.length > 300) return;
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -65,7 +61,7 @@ const CreateProfile: React.FC = () => {
         progress: undefined,
         theme: "light",
       });
-      navigate("/user-deatils");
+      navigate("/home");
     } else {
       console.log(result.payload.message);
       toast.info(result.payload.message, {
@@ -164,7 +160,7 @@ const CreateProfile: React.FC = () => {
                       <label htmlFor="bio">Your Bio</label>
                       <br />
                       <span className="text-slate-500 text-xs">
-                        {text.length}/100 characters
+                        {formData.bio.length}/300 characters
                       </span>
                       <TextareaAutosize
                         name="bio"
@@ -180,7 +176,20 @@ const CreateProfile: React.FC = () => {
                           type="submit"
                           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                         >
-                          Submit
+                          {loading ? (
+                            <ThreeDots
+                              visible={true}
+                              height="24"
+                              width="36"
+                              color="white"
+                              radius="8"
+                              ariaLabel="three-dots-loading"
+                              wrapperStyle={{}}
+                              wrapperClass=""
+                            />
+                          ) : (
+                            <span>Submit</span>
+                          )}
                         </button>
                       </div>
                     </div>

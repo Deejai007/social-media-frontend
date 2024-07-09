@@ -1,14 +1,15 @@
-import { createRoot } from 'react-dom/client'
-import 'tailwindcss/tailwind.css'
-import { Provider } from 'react-redux'
+import { createRoot } from "react-dom/client";
+import "tailwindcss/tailwind.css";
+import { Provider } from "react-redux";
 
-import { store, persistor } from './redux/store/store'
-import { PersistGate } from 'redux-persist/integration/react'
-import App from 'components/App'
-import { ToastContainer } from 'react-toastify'
+import { store, persistor } from "./redux/store/store";
+import { PersistGate } from "redux-persist/integration/react";
+import App from "components/App";
+import { ToastContainer } from "react-toastify";
+import { BrowserRouter } from "react-router-dom";
 
-const container = document.getElementById('root') as HTMLDivElement
-const root = createRoot(container)
+const container = document.getElementById("root") as HTMLDivElement;
+const root = createRoot(container);
 
 root.render(
   <Provider store={store}>
@@ -25,7 +26,9 @@ root.render(
         pauseOnHover
         theme="light"
       />
-      <App />
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
     </PersistGate>
-  </Provider>
-)
+  </Provider>,
+);

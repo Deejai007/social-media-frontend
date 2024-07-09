@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "redux/store/store";
+import { ThreeDots } from "react-loader-spinner";
 import { verify, sendOtp } from "../redux/actions/userActions";
 import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
@@ -10,6 +11,7 @@ interface Props {}
 
 const Verify: React.FC<Props> = () => {
   const userState = useSelector((state: RootState) => state.user);
+  const loading = useSelector((state: RootState) => state.user.loading);
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
@@ -105,7 +107,7 @@ const Verify: React.FC<Props> = () => {
         progress: undefined,
         theme: "light",
       });
-      navigate("/user-deatils");
+      navigate("/create-profile");
     } else {
       console.log(result.payload.message);
     }
@@ -129,7 +131,20 @@ const Verify: React.FC<Props> = () => {
                   onClick={handleSendOtp}
                   className="w-full inline-flex justify-center whitespace-nowrap rounded-lg bg-indigo-500 px-3.5 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-950/10 hover:bg-indigo-600 focus:outline-none focus:ring focus:ring-indigo-300 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-700 transition-colors duration-150"
                 >
-                  Send OTP
+                  {loading ? (
+                    <ThreeDots
+                      visible={true}
+                      height="24"
+                      width="36"
+                      color="white"
+                      radius="8"
+                      ariaLabel="three-dots-loading"
+                      wrapperStyle={{}}
+                      wrapperClass=""
+                    />
+                  ) : (
+                    <span>Send OTP</span>
+                  )}
                 </button>
               ) : (
                 <form id="otp-form" onSubmit={handleSubmit}>
@@ -154,7 +169,20 @@ const Verify: React.FC<Props> = () => {
                       type="submit"
                       className="w-full inline-flex justify-center whitespace-nowrap rounded-lg bg-indigo-500 px-3.5 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-950/10 hover:bg-indigo-600 focus:outline-none focus:ring focus:ring-indigo-300 focus-visible:outline-none focus-visible:ring focus-visible:ring-indigo-300 transition-colors duration-150"
                     >
-                      Verify Account
+                      {loading ? (
+                        <ThreeDots
+                          visible={true}
+                          height="24"
+                          width="36"
+                          color="white"
+                          radius="8"
+                          ariaLabel="three-dots-loading"
+                          wrapperStyle={{}}
+                          wrapperClass=""
+                        />
+                      ) : (
+                        <span>Verify Account</span>
+                      )}
                     </button>
                   </div>
                 </form>

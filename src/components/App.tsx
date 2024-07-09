@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Outlet,
+} from "react-router-dom";
 import Login from "../pages/Login/Login";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,7 +13,21 @@ import Home from "../pages/Home";
 import ForgotPassword from "pages/ForgotPassword/ForgotPassword";
 import PasswordReset from "pages/ForgotPassword/PasswordReset";
 import CreateProfile from "pages/CreateProfile";
-function App() {
+import TopNav from "pages/TopNav";
+import SideNav from "pages/SideNav";
+import Profile from "pages/Follow/ProfilePage";
+
+const IncludeNav: React.FC = () => (
+  <>
+    <TopNav />
+    <SideNav />
+    <div className="app-content md:ml-72 pt-16">
+      <Outlet />
+    </div>
+  </>
+);
+
+const App: React.FC = () => {
   return (
     <div className="">
       <ToastContainer
@@ -25,20 +44,21 @@ function App() {
         // theme="light"
       ></ToastContainer>
 
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/verify" element={<Verify />} />
+      <Routes>
+        <Route element={<IncludeNav />}>
           <Route path="/home" element={<Home />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/password-reset/:token" element={<PasswordReset />} />
-          <Route path="/create-profile" element={<CreateProfile />} />
-        </Routes>
-      </Router>
+          <Route path="/profile/:username" element={<Profile />} />
+        </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/verify" element={<Verify />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/password-reset/:token" element={<PasswordReset />} />
+        <Route path="/create-profile" element={<CreateProfile />} />
+      </Routes>
     </div>
   );
-}
+};
 
 export default App;

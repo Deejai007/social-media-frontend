@@ -1,54 +1,65 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { register } from '../redux/actions/userActions'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import { AppDispatch, RootState } from 'redux/store/store'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { connect } from "react-redux";
+import { register } from "../redux/actions/userActions";
+import { ThreeDots } from "react-loader-spinner";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AppDispatch, RootState } from "redux/store/store";
 
 // interface Props {
 //   registerUser: (userData: any) => void
 // }
 
 const SignUp: React.FC = () => {
-  const dispatch: AppDispatch = useDispatch()
-  const user = useSelector((state: RootState) => state.user)
-  const navigate = useNavigate()
-
+  const dispatch: AppDispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
+  const loading = useSelector((state: RootState) => state.user.loading);
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  })
-  const { email, password } = formData
+    email: "",
+    password: "",
+  });
+  const { email, password } = formData;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    console.log(formData)
+    e.preventDefault();
+    console.log(formData);
     const result = await dispatch(
-      register({ email: email, password: password })
-    )
+      register({ email: email, password: password }),
+    );
     if (result.payload.success) {
-      console.log(result.payload.message)
+      console.log(result.payload.message);
       toast.success(result.payload.message, {
-        position: 'top-right',
+        position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: 'light'
-      })
-      navigate('/verify')
+        theme: "light",
+      });
+      navigate("/verify");
     } else {
-      console.log(result.payload.message)
+      console.log(result.payload.message);
+      toast.error(result.payload.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
     }
-  }
+  };
 
   return (
     <div className="h-screen bg-gray-100 text-gray-900 flex justify-center ">
@@ -106,20 +117,36 @@ const SignUp: React.FC = () => {
                     value={password}
                     onChange={handleChange}
                   />
+
                   <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
-                    <svg
-                      className="w-6 h-6 -ml-2"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                      <circle cx="8.5" cy="7" r="4" />
-                      <path d="M20 8v6M23 11h-6" />
-                    </svg>
-                    <span className="ml-3">Sign Up</span>
+                    {loading ? (
+                      <ThreeDots
+                        visible={true}
+                        height="24"
+                        width="36"
+                        color="white"
+                        radius="8"
+                        ariaLabel="three-dots-loading"
+                        wrapperStyle={{}}
+                        wrapperClass=""
+                      />
+                    ) : (
+                      <>
+                        <svg
+                          className="w-6 h-6 -ml-2"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                          <circle cx="8.5" cy="7" r="4" />
+                          <path d="M20 8v6M23 11h-6" />
+                        </svg>
+                        <span className="ml-3">Sign Up</span>
+                      </>
+                    )}
                   </button>
                   <p className="mt-4 text-xs text-gray-600 text-center">
                     Already registered?
@@ -137,12 +164,12 @@ const SignUp: React.FC = () => {
             className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat"
             style={{
               backgroundImage:
-                "url('https://storage.googleapis.com/devitary-image-host.appspot.com/15848031292911696601-undraw_designer_life_w96d.svg')"
+                "url('https://storage.googleapis.com/devitary-image-host.appspot.com/15848031292911696601-undraw_designer_life_w96d.svg')",
             }}
           ></div>
         </div>
       </div>
     </div>
-  )
-}
-export default connect(null, { register })(SignUp)
+  );
+};
+export default connect(null, { register })(SignUp);

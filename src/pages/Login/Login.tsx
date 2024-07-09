@@ -29,33 +29,38 @@ const SignUp: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(formData);
-    const result = await dispatch(login({ email: email, password: password }));
-    if (result.payload.success) {
-      console.log(result.payload.message);
-      toast.success("Logged in!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
-      navigate("/home");
-    } else {
-      console.log(result.payload.message);
-
-      toast.error(result.payload.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+    try {
+      const result = await dispatch(
+        login({ email: email, password: password }),
+      );
+      if (result.payload.success) {
+        console.log(result.payload.message);
+        toast.success("Logged in!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+        navigate("/home");
+      } else {
+        console.log(result.payload.message);
+        toast.error(result.payload.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+        });
+      }
+    } catch (error: any) {
+      toast.error("There was a problem logging in");
     }
   };
 

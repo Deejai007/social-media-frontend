@@ -14,11 +14,11 @@ export default {
         nunito: ["Nunito Sans", "sans-serif"],
       },
       colors: {
-        primary: "rgb(99 102 2241)",
+        primary: "rgba(99 ,102, 2241,0.7)",
         // primary: "#3F51B5",
         secondary: "#159EEC",
         accent: "#BFD2F8",
-        mainbg: "rgb(224, 224, 224)",
+        mainbg: "rgb(240, 245, 245)",
       },
       backgroundImage: {
         hero: "url('/public/image_assets/hero-bg.JPG')",

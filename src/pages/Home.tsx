@@ -7,7 +7,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AppDispatch, RootState } from "redux/store/store";
-import Nav from "./Nav";
+import Nav from "./SideNav";
 
 const ComponentName: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -19,11 +19,61 @@ const ComponentName: React.FC = () => {
     console.log(user);
   }, [user]);
   return (
-    <div className="h-screen bg-mainbg   ">
-      <Nav user={user} />
+    <div className="h-screen">
       Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sint veritatis
       mollitia nemo sequi harum perferendis voluptate suscipit vitae, similique
       nihil?
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Est nostrum
+      laborum similique odio fugiat quibusdam consequuntur. Placeat dolores non
+      nam. Culpa, repellendus commodi quod tenetur porro pariatur quam atque, in
+      laboriosam sapiente neque ullam odit. Similique delectus ex autem
+      molestiae sed tempore? Deserunt accusamus earum iste quo voluptate illo
+      soluta doloribus doloremque consequuntur error eius repellat aut at
+      quibusdam, deleniti unde minima nesciunt esse. Deserunt, veniam assumenda
+      ea praesentium, molestiae eligendi et dolorum fugiat quam quisquam
+      aspernatur nostrum obcaecati placeat saepe eius nihil! Possimus eligendi
+      aut provident quam, fugiat pariatur quos harum vel animi expedita
+      excepturi esse dolor omnis et?
     </div>
   );
 };

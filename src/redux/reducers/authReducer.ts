@@ -1,7 +1,7 @@
 import {
   forgotResetPassword,
   forgotPassword,
-  getUser,
+  getUserProfile,
   login,
   register,
   sendOtp,
@@ -14,6 +14,7 @@ import { UserState } from "../types/user";
 import { createLogger } from "vite";
 const initialState: UserState = {
   user: null,
+  isFollowing: false,
   loading: false,
   error: null,
   successMessage: null,
@@ -32,16 +33,17 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getUser.pending, (state) => {
+      .addCase(getUserProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
-        // console.log('State at register:',state);
       })
-      .addCase(getUser.fulfilled, (state, action) => {
+      .addCase(getUserProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.data;
+        state.isFollowing = action.payload.data.isFollowing;
+        // console.log(state.user.user);
+        // state.user = action.payload.data;
       })
-      .addCase(getUser.rejected, (state, action) => {
+      .addCase(getUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
         console.log(action.payload);
@@ -74,7 +76,10 @@ const userSlice = createSlice({
       .addCase(verify.fulfilled, (state, action) => {
         state.loading = false;
         state.successMessage = action.payload.message;
-        state.user.verify = true;
+        console.log("====================================");
+        console.log(state.user);
+        console.log("====================================");
+        state.user.verified = true;
       })
       .addCase(verify.rejected, (state, action) => {
         state.loading = false;

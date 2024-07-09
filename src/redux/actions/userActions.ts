@@ -12,16 +12,17 @@ const initialState: UserState = {
 };
 
 // Async actions
-export const getUser = createAsyncThunk(
+export const getUserProfile = createAsyncThunk(
   "user/getUser",
-  async (token: string, { rejectWithValue }) => {
+  async (username: string, { rejectWithValue }) => {
     try {
-      const response = await axiosApi.post("/user/register", {
-        headers: { Authorization: token },
-      });
+      const response = await axiosApi.get(`/user/getuser/${username}`);
+      console.log(response.data);
+
       return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.response.data.message);
+      console.log(error.response.data);
+      return rejectWithValue(error.response.data);
     }
   },
 );
@@ -37,9 +38,7 @@ export const register = createAsyncThunk(
   ) => {
     try {
       const response = await axiosApi.post("/user/register", userData);
-      console.log("====================================");
-      console.log(response.data);
-      console.log("====================================");
+
       return response.data;
     } catch (error: any) {
       console.log(error.response.data);
@@ -67,6 +66,9 @@ export const verify = createAsyncThunk(
   ) => {
     try {
       const response = await axiosApi.post("/user/verify", verificationData);
+      console.log("====================================");
+      console.log(response);
+      console.log("====================================");
       return response.data;
     } catch (error: any) {
       console.log(error.response.data);
@@ -85,6 +87,9 @@ export const login = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
+      console.log("====================================");
+      console.log("login");
+      console.log("====================================");
       const response = await axiosApi.post("/user/login", userData, {
         withCredentials: true,
       });
