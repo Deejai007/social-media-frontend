@@ -15,7 +15,8 @@ import PasswordReset from "pages/ForgotPassword/PasswordReset";
 import CreateProfile from "pages/CreateProfile";
 import TopNav from "components/TopNav";
 import SideNav from "components/SideNav";
-import Profile from "pages/Follow/ProfilePage";
+import Profile from "pages/ProfilePage";
+import PostPage from "pages/PostPage";
 
 const IncludeNav: React.FC = () => (
   <>
@@ -48,6 +49,7 @@ const App: React.FC = () => {
         <Route element={<IncludeNav />}>
           <Route path="/home" element={<Home />} />
           <Route path="/profile/:username" element={<Profile />} />
+          <Route path="/post/:postId" element={<PostPage />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Login />} />

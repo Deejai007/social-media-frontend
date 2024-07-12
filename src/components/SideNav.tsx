@@ -11,7 +11,7 @@ const SideNav: React.FC = () => {
   console.log(user.user.username);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [createOpen, setCreateOpen] = useState(true);
+  const [createOpen, setCreateOpen] = useState(false);
   const [isSelected, setIsSelected] = useState("");
   const handleCreateOpen = () => {
     console.log("hi");

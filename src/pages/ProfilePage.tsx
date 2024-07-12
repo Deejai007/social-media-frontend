@@ -150,7 +150,9 @@ const ProfilePage = () => {
               </li>
             </ul>
             {/* user meta form medium screens */}
-            <div className="hidden md:block">{profileData.bio}</div>
+            <div className="hidden md:block">
+              <pre>{profileData.bio}</pre>
+            </div>
           </div>
           {/* user meta form small screens */}
           <div className="md:hidden text-sm my-2">{profileData.bio}</div>

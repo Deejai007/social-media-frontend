@@ -4,6 +4,9 @@ export default {
   content: ["./src/**/*.{mjs,js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      height: {
+        128: "32rem",
+      },
       boxShadow: {
         service: "2px 2px 3px 3px rgba(0, 0, 0, 0.3)",
       },
@@ -32,6 +35,7 @@ export default {
         xs: "480px",
         sm: "640px",
         md: "768px",
+        "2md": "884px",
         lg: "1024px",
         xl: "1280px",
         "2xl": "1536px",

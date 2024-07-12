@@ -3,6 +3,7 @@ import axios from "axios";
 import axiosApi from "utils/axiosconfig";
 import { UserState } from "redux/types/user";
 // import { fetchPosts } from 'redux/actions/postActions';
+// import { getSinglePost } from './PostAcitons';
 const initialState: UserState = {
   user: null,
   isFollowing: false,
@@ -41,6 +42,21 @@ export const createPost = createAsyncThunk(
           "Content-Type": "multipart/form-data",
         },
       });
+      console.log(response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.log(error.response.data);
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+// get single post
+export const getSinglePost = createAsyncThunk(
+  "post/getsinglepost",
+  async (postId: string, { rejectWithValue }) => {
+    try {
+      const response = await axiosApi.get(`/post/get-post/${postId}`);
       console.log(response.data);
 
       return response.data;

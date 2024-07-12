@@ -90,6 +90,8 @@ const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
     }
   };
   const handleNavPost = () => {
+    setPostSuccess(false);
+    setCreateOpen(false);
     navigate(`/post/${postPath}`);
   };
   return (
@@ -158,7 +160,18 @@ const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
               )}
             </div>
             <div className="mb-4">
-              <TextareaAutosize
+              {/* <TextareaAutosize
+                name="bio"
+                placeholder="Write a caption..."
+                onChange={(e) => {
+                  setCaption(e.target.value);
+                  console.log(caption);
+                }}
+                value={caption}
+                id="bio"
+                className="h-20 border mt-1 rounded px-4 w-full bg-gray-50 p-1"
+              /> */}
+              <textarea
                 name="bio"
                 placeholder="Write a caption..."
                 onChange={(e) => {
