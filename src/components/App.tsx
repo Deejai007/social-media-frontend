@@ -13,8 +13,8 @@ import Home from "../pages/Home";
 import ForgotPassword from "pages/ForgotPassword/ForgotPassword";
 import PasswordReset from "pages/ForgotPassword/PasswordReset";
 import CreateProfile from "pages/CreateProfile";
-import TopNav from "pages/TopNav";
-import SideNav from "pages/SideNav";
+import TopNav from "components/TopNav";
+import SideNav from "components/SideNav";
 import Profile from "pages/Follow/ProfilePage";
 
 const IncludeNav: React.FC = () => (

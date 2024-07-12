@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
-import { getUserProfile } from "../../redux/actions/userActions";
-import { AppDispatch, RootState } from "../../redux/store/store";
+import { getUserProfile } from "../redux/actions/userActions";
+import { AppDispatch, RootState } from "../redux/store/store";
+import { FaUserEdit } from "react-icons/fa";
 
 interface ProfileData {
   username: string;
@@ -15,28 +16,41 @@ interface ProfileData {
 const ProfilePage = () => {
   const { username } = useParams<{ username: string }>();
   console.log(username);
-  const [profileData, setProfileData] = useState<ProfileData>({});
+  const [profileData, setProfileData] = useState<ProfileData>({
+    username: "",
+    postCount: 0,
+    followerCount: 0,
+    followingCount: 0,
+    bio: "",
+  });
   const dispatch: AppDispatch = useDispatch();
   const User = useSelector((state: RootState) => state.user);
   const isLoading = useSelector((state: RootState) => state.user.loading);
 
   const getData = async () => {
-    if (username) {
-      const result = await dispatch(getUserProfile(username));
+    try {
+      if (username) {
+        const result = await dispatch(getUserProfile(username));
 
-      if (result.payload.success) {
-        console.log(result.payload.data.user);
-        setProfileData(result.payload.data.user);
-      } else {
-        console.log(result.payload.message);
+        if (result.payload.success) {
+          console.log(result.payload.data.user);
+          setProfileData(result.payload.data.user);
+        } else {
+          console.log(result.payload.message);
+        }
       }
+    } catch (error) {
+      console.log(error);
     }
+  };
+  const handleFollow = () => {
+    console.log("follow");
   };
 
   useEffect(() => {
     getData();
     console.log(User);
-  }, []);
+  }, [username]);
 
   if (User.loading) {
     return (
@@ -71,7 +85,7 @@ const ProfilePage = () => {
           <div className="w-8/12 md:w-7/12 ml-4">
             <div className="md:flex md:flex-wrap md:items-center mb-4">
               <h2 className="text-3xl inline-block font-light md:mr-2 mb-2 sm:mb-0">
-                {profileData.username}
+                {profileData.username || "User Not found"}
               </h2>
               {/* badge */}
               <span
@@ -85,14 +99,32 @@ const ProfilePage = () => {
                 />
               </span>
               {/* follow button */}
-              <a
-                href="#"
-                className="bg-primary px-2 py-1 
-                  text-white font-semibold text-sm rounded block text-center 
-                  sm:inline-block block"
-              >
-                Follow
-              </a>
+              {User.user.username == username ? (
+                <button
+                  className="bg-secondary px-2 py-1 
+              text-white font-semibold text-sm rounded flex justify-center items-center text-center 
+            "
+                >
+                  <FaUserEdit /> &nbsp; Edit Profile
+                </button>
+              ) : User.isFollowing ? (
+                <button
+                  className="bg-primary px-2 py-1 
+                text-white font-semibold text-sm rounded block text-center 
+                sm:inline-block block"
+                >
+                  Unollow
+                </button>
+              ) : (
+                <button
+                  onClick={handleFollow}
+                  className="bg-primary px-2 py-1 
+                text-white font-semibold text-sm rounded block text-center 
+                sm:inline-block block"
+                >
+                  Follow
+                </button>
+              )}
             </div>
             {/* post, following, followers list for medium screens */}
             <ul className="hidden md:flex space-x-8 mb-4">

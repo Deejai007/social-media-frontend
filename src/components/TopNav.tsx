@@ -17,7 +17,7 @@ const TopNav: React.FC = () => {
           <img src="public/assets/logo.png" className="h-8 -mr-2" alt="Logo" />
           <span className="font-sevillana text-4xl font-semibold ">treiwo</span>
         </Link>
-        <div className="relative mx-auto text-gray-600 lg:block hidden">
+        <div className="relative mx-auto text-gray-600 md:block hidden">
           <input
             className="border-2 border-gray-300 w-72 bg-white h-10 pl-2 pr-8 rounded-xl text-sm focus:outline-none"
             type="search"

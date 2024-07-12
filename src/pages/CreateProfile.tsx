@@ -7,7 +7,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AppDispatch, RootState } from "redux/store/store";
-import Nav from "./SideNav";
+import Nav from "../components/SideNav";
 import { addUserData } from "redux/actions/userActions";
 
 const CreateProfile: React.FC = () => {

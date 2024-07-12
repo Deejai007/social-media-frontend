@@ -6,6 +6,7 @@ import { log } from "console";
 
 const initialState: UserState = {
   user: null,
+  isFollowing: false,
   loading: false,
   error: null,
   successMessage: null,
@@ -37,6 +38,8 @@ export const register = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
+      console.log(userData);
+
       const response = await axiosApi.post("/user/register", userData);
 
       return response.data;
