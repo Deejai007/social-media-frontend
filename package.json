@@ -4,13 +4,8 @@
   "version": "0.1.0",
   "private": true,
   "author": {
-    "name": "",
-    "email": "",
-    "url": ""
-  },
-  "bugs": {
-    "url": "",
-    "email": ""
+    "name": "DJ",
+    "email": "deepakjain2k19@gmail.com"
   },
   "scripts": {
     "dev": "vite",
