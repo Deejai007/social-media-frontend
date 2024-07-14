@@ -8,7 +8,7 @@ import { SiTicktick } from "react-icons/si";
 
 import { AppDispatch, RootState } from "redux/store/store";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost } from "../redux/actions/PostAcitons";
+import { createPost } from "../redux/actions/PostActions";
 import { toast } from "react-toastify";
 import { ThreeDots } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
@@ -98,7 +98,7 @@ const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
     <div
       className={`${
         createOpen ? "" : "hidden"
-      } w-full h-full backdrop-blur-sm bg-black/40 absolute z-20 flex justify-center items-center`}
+      } w-full h-full backdrop-blur-sm bg-black/40 absolute z-30 flex justify-center items-center `}
     >
       {postSuccess ? (
         <div className="bg-white m-3 px-4 pt-1 pb-3 max-w-96 rounded-xl  border-4 border-green-400 shadow-lg  max-w-md w-full flex items-center justify-center flex-col">
@@ -168,7 +168,7 @@ const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
                   console.log(caption);
                 }}
                 value={caption}
-                id="bio"
+                id="bio"  
                 className="h-20 border mt-1 rounded px-4 w-full bg-gray-50 p-1"
               /> */}
               <textarea
@@ -203,7 +203,11 @@ const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
                 />
               </div>
             </div>
-            {emojiDialogOpen && <EmojiPicker onEmojiClick={handleEmojiClick} />}
+            <div className="absolute">
+              {emojiDialogOpen && (
+                <EmojiPicker onEmojiClick={handleEmojiClick} />
+              )}
+            </div>
             <div className="flex justify-end">
               <button
                 type="button"
@@ -214,7 +218,10 @@ const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
               </button>
               <button
                 type="submit"
-                className="bg-primary text-white px-4 py-2 w-20 flex items-center justify-center rounded"
+                className={`px-4 py-2 w-20 flex items-center justify-center rounded text-white ${
+                  !image ? "bg-gray-500 cursor-not-allowed" : "bg-primary"
+                }`}
+                disabled={image ? false : true}
               >
                 {loading ? (
                   <ThreeDots

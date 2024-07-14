@@ -18,7 +18,7 @@ export const getUserProfile = createAsyncThunk(
   async (username: string, { rejectWithValue }) => {
     try {
       const response = await axiosApi.get(`/user/getuser/${username}`);
-      console.log(response.data);
+      // console.log(response.data);
 
       return response.data;
     } catch (error: any) {

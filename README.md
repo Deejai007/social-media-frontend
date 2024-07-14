@@ -1,80 +1,54 @@
-![reactjs-vite-tailwindcss-boilerplate](https://user-images.githubusercontent.com/16243531/217138979-b854309c-4742-4275-a705-f9fec5158217.jpg)
+# <p align="center">Treiwo- A social media </p>
 
-# React Tailwindcss Boilerplate build with Vite
+This repository contains the frontend implementation of a social media clone built using Reactts & vite.
 
-This is a boilerplate build with Vite, React 18, TypeScript, Vitest, Testing Library, TailwindCSS 3, Eslint and Prettier.
+---
 
-## What is inside?
+## Features
 
-This project uses many tools like:
+- **Redux**: for state management.
+- **Tailwind CSS**: for styling.
+- **Cloudinary Image Storage**: Store and manage images efficiently with Cloudinary.
+- **JWT Authentication**: Secure user authentication.
 
-- [Vite](https://vitejs.dev)
-- [ReactJS](https://reactjs.org)
-- [TypeScript](https://www.typescriptlang.org)
-- [Vitest](https://vitest.dev)
-- [Testing Library](https://testing-library.com)
-- [Tailwindcss](https://tailwindcss.com)
-- [Eslint](https://eslint.org)
-- [Prettier](https://prettier.io)
+---
 
-## Getting Started
+## Installation
 
-### Install
+1. **Clone the repository:**
 
-Create the project.
+   ```bash
+   git clone https://github.com/Deejai007/social-media-frontend.git
+   ```
 
-```bash
-npx degit joaopaulomoraes/reactjs-vite-tailwindcss-boilerplate my-app
-```
+2. **Install dependencies:**
 
-Access the project directory.
+   ```bash
+   cd social-media-clone-frontend
+   npm install
 
-```bash
-cd my-app
-```
+   ```
 
-Install dependencies.
+3. **Set up environment variables:**
 
-```bash
-pnpm install
-```
+   ```bash
+    VITE_SERVER_URL=your_backend_api_url
 
-Serve with hot reload at <http://localhost:5173>.
+   ```
 
-```bash
-pnpm run dev
-```
+4. **Start the server:**
+   ```bash
+   npm run dev
+   ```
 
-### Lint
+---
 
-```bash
-pnpm run lint
-```
+### Contributing
 
-### Typecheck
+Contributions are welcome! Please fork the repository and submit pull requests to contribute.
 
-```bash
-pnpm run typecheck
-```
+---
 
-### Build
+### License
 
-```bash
-pnpm run build
-```
-
-### Test
-
-```bash
-pnpm run test
-```
-
-View and interact with your tests via UI.
-
-```bash
-pnpm run test:ui
-```
-
-## License
-
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).

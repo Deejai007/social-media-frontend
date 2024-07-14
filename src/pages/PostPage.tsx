@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import { AppDispatch, RootState } from "../redux/store/store";
 import { FaUserEdit } from "react-icons/fa";
@@ -16,17 +16,24 @@ import {
   IoHappyOutline,
   IoHeart,
 } from "react-icons/io5";
-import { getSinglePost } from "./../redux/actions/PostAcitons";
+import {
+  getSinglePost,
+  likePost,
+  unlikePost,
+} from "../redux/actions/PostActions";
 
 const PostPage = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const loading = useSelector((state: RootState) => state.post.loading);
+  const User = useSelector((state: RootState) => state.user.user);
   const { postId } = useParams<{ postId: string }>();
   console.log(postId);
   const [postData, setPostData] = useState<Post | null>(null);
-  const dispatch: AppDispatch = useDispatch();
-  const loading = useSelector((state: RootState) => state.post.loading);
 
   const getData = async () => {
     try {
+      console.log(User);
+
       if (postId) {
         console.log("hi");
 
@@ -43,10 +50,42 @@ const PostPage = () => {
       console.log(error);
     }
   };
+  const handleLikePost = async () => {
+    try {
+      const result = await dispatch(
+        likePost({ postId: postId || "", userId: User.id }),
+      );
+      if (result.payload.success) {
+        console.log(result.payload);
+
+        setPostData(result.payload.data);
+      } else {
+        console.log(result.payload.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleUnlikePost = async () => {
+    try {
+      const result = await dispatch(
+        unlikePost({ postId: postId || "", userId: User.id }),
+      );
+      if (result.payload.success) {
+        console.log(result.payload.data);
+
+        setPostData(result.payload.data);
+      } else {
+        console.log(result.payload.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     getData();
-  }, [postId]);
+  }, []);
 
   if (loading) {
     return (
@@ -73,11 +112,15 @@ const PostPage = () => {
     <main className="bg-white  xl:ml-36 lg:ml-16  border bg-white 2md:max-w-xl">
       <div className="flex items-center justify-between p-2.5">
         <div className="flex items-center">
-          <div className="h-10 w-10 bg-neutral-200 rounded-full">
-            <img src={postData.profileImage ?? ""} className="rounded-full" />
-          </div>
+          <Link to={`/profile/${postData.username}`}>
+            <div className="h-10 w-10 bg-neutral-200 rounded-full">
+              <img src={postData.profileImage ?? ""} className="rounded-full" />
+            </div>
+          </Link>
           <div className="ml-2.5">
-            <p className="font-medium text-md">{postData.username}</p>
+            <Link to={`/profile/${postData.username}`}>
+              <p className="font-medium text-md">{postData.username}</p>
+            </Link>
             <p className="text-sm flex flex-row justify-center items-center">
               <span>
                 <CiLocationOn />
@@ -108,15 +151,22 @@ const PostPage = () => {
         <div className="flex items-center justify-between text-2xl">
           <div className="flex items-center space-x-4">
             {postData.isLikedByCurrentUser ? (
-              <IoHeart className="cursor-pointer text-red-500 transition-all active:scale-75" />
+              <IoHeart
+                className="cursor-pointer text-red-500 transition-all active:scale-75"
+                onClick={handleUnlikePost}
+              />
             ) : (
-              <IoHeartOutline className="cursor-pointer transition-all hover:opacity-50 active:scale-75" />
+              <IoHeartOutline
+                className="cursor-pointer transition-all hover:opacity-50 active:scale-75"
+                onClick={handleLikePost}
+              />
             )}
-            <IoChatbubbleOutline className="cursor-pointer hover:opacity-50" />
+            {/* <IoChatbubbleOutline className="cursor-pointer hover:opacity-50" /> */}
             <IoPaperPlaneOutline className="cursor-pointer hover:opacity-50" />
           </div>
           <IoBookmarkOutline className="cursor-pointer hover:opacity-50" />
         </div>
+        <div className="">{postData.likes} likes</div>
         <div className="text-sm my-2">
           <pre>{postData.caption}</pre>
         </div>

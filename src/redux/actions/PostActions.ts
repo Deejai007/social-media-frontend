@@ -66,3 +66,62 @@ export const getSinglePost = createAsyncThunk(
     }
   },
 );
+
+// get user posts for user's profile page
+export const getUserPosts = createAsyncThunk(
+  "post/getuserposts",
+  async (
+    postData: { userId: string; limit: number; offset: number },
+    { rejectWithValue },
+  ) => {
+    try {
+      console.log(postData.userId);
+      const response = await axiosApi.get(
+        `/post/get-user-posts/${postData.userId}?limit=${postData.limit}&offset=${postData.offset}`,
+      );
+
+      console.log(response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.log(error.response.data);
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+
+// like a post
+export const likePost = createAsyncThunk(
+  "post/likepost",
+  async (postData: { userId: string; postId: string }, { rejectWithValue }) => {
+    try {
+      console.log(postData.userId);
+      const response = await axiosApi.post(`/post/like-post`, postData);
+
+      console.log(response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.log(error.response.data);
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+
+// unlike a post
+export const unlikePost = createAsyncThunk(
+  "post/unlikepost",
+  async (postData: { userId: string; postId: string }, { rejectWithValue }) => {
+    try {
+      console.log(postData.userId);
+      const response = await axiosApi.post(`/post/unlike-post`, postData);
+
+      console.log(response.data);
+
+      return response.data;
+    } catch (error: any) {
+      console.log(error.response.data);
+      return rejectWithValue(error.response.data);
+    }
+  },
+);

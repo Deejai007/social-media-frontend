@@ -3,7 +3,7 @@ import { env } from "process";
 
 axios.defaults.withCredentials = true;
 
-console.log(import.meta.env.VITE_SERVER_URL);
+// console.log(import.meta.env.VITE_SERVER_URL);
 const axiosApi = axios.create({
   baseURL: import.meta.env.VITE_SERVER_URL,
   // baseURL: "http://localhost:8967",

@@ -8,7 +8,7 @@ import CreatePost from "./CreatePost";
 
 const SideNav: React.FC = () => {
   const user = useSelector((state: RootState) => state.user);
-  console.log(user.user.username);
+  // console.log(user.user.username);
 
   const [isOpen, setIsOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
@@ -42,7 +42,7 @@ const SideNav: React.FC = () => {
           onClick={toggleSidebar}
           aria-controls="default-sidebar"
           type="button"
-          className="absolute mt-4 right-4 md:hidden text-3xl z-[43]"
+          className="absolute mt-4 right-4 md:hidden text-3xl z-[25]"
         >
           <RiMenuFill />
         </button>
