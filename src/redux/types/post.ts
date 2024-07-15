@@ -7,7 +7,7 @@ export interface Post {
   profileImage: string | null;
   username: string | null;
   createdAt: Date | null;
-  likes: number | 0;
+  likeCount: number | 0;
   isLikedByCurrentUser: boolean;
 }
 export interface PostState {

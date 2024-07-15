@@ -93,10 +93,12 @@ export const getUserPosts = createAsyncThunk(
 // like a post
 export const likePost = createAsyncThunk(
   "post/likepost",
-  async (postData: { userId: string; postId: string }, { rejectWithValue }) => {
+  async (postId: string, { rejectWithValue }) => {
     try {
-      console.log(postData.userId);
-      const response = await axiosApi.post(`/post/like-post`, postData);
+      console.log(postId);
+      const response = await axiosApi.post(`/post/like-post`, {
+        postId: postId,
+      });
 
       console.log(response.data);
 
@@ -111,9 +113,9 @@ export const likePost = createAsyncThunk(
 // unlike a post
 export const unlikePost = createAsyncThunk(
   "post/unlikepost",
-  async (postData: { userId: string; postId: string }, { rejectWithValue }) => {
+  async (postData: { postId: string }, { rejectWithValue }) => {
     try {
-      console.log(postData.userId);
+      // console.log(postData.userId);
       const response = await axiosApi.post(`/post/unlike-post`, postData);
 
       console.log(response.data);

@@ -27,21 +27,30 @@ const PostPage = () => {
   const loading = useSelector((state: RootState) => state.post.loading);
   const User = useSelector((state: RootState) => state.user.user);
   const { postId } = useParams<{ postId: string }>();
-  console.log(postId);
+  // console.log(postId);
   const [postData, setPostData] = useState<Post | null>(null);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const getData = async () => {
     try {
-      console.log(User);
+      // console.log(User);
 
       if (postId) {
-        console.log("hi");
+        // console.log("hi");
 
-        const result = await dispatch(getSinglePost(postId));
+        const result = await dispatch(getSinglePost(postId.toString()));
         if (result.payload.success) {
-          console.log(result.payload.data);
-
+          // console.log(result.payload.data);
+          // console.log(result.payload.data.id);
+          // console.log(result.payload.data.isLikedByUser);
+          if (result.payload.data.isLikedByUser) setIsLiked(true);
           setPostData(result.payload.data);
+          setIsLoading(false);
+          // console.log(postData);
+          // console.log(postData);
+
+          // console.log(isLiked);
         } else {
           console.log(result.payload.message);
         }
@@ -51,30 +60,48 @@ const PostPage = () => {
     }
   };
   const handleLikePost = async () => {
-    try {
-      const result = await dispatch(
-        likePost({ postId: postId || "", userId: User.id }),
-      );
-      if (result.payload.success) {
-        console.log(result.payload);
-
-        setPostData(result.payload.data);
-      } else {
-        console.log(result.payload.message);
+    if (postData)
+      try {
+        const result = await dispatch(likePost(postId || ""));
+        if (result.payload.success) {
+          // console.log(result.payload);
+          setIsLiked(true);
+          setPostData((prevPost) => {
+            if (prevPost) {
+              return {
+                ...prevPost,
+                likeCount: prevPost.likeCount + 1,
+                isLikedByUser: true,
+              };
+            }
+            return prevPost;
+          });
+          // setPostData(result.payload.data);
+        } else {
+          console.log(result.payload.message);
+        }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
-    }
   };
   const handleUnlikePost = async () => {
     try {
-      const result = await dispatch(
-        unlikePost({ postId: postId || "", userId: User.id }),
-      );
+      const result = await dispatch(unlikePost({ postId: postId || "" }));
       if (result.payload.success) {
         console.log(result.payload.data);
+        setIsLiked(false);
+        setPostData((prevPost) => {
+          if (prevPost) {
+            return {
+              ...prevPost,
+              likeCount: prevPost.likeCount - 1,
+              isLikedByUser: false,
+            };
+          }
+          return prevPost;
+        });
 
-        setPostData(result.payload.data);
+        // setPostData(result.payload.data);
       } else {
         console.log(result.payload.message);
       }
@@ -85,9 +112,9 @@ const PostPage = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [postId]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className=" -mt-16 flex items-center justify-center h-screen">
         <ThreeDots
@@ -150,9 +177,11 @@ const PostPage = () => {
       <div className="p-3">
         <div className="flex items-center justify-between text-2xl">
           <div className="flex items-center space-x-4">
-            {postData.isLikedByCurrentUser ? (
+            {loading ? (
+              <IoHeart className=" text-red-200 transition-all active:scale-75" />
+            ) : isLiked ? (
               <IoHeart
-                className="cursor-pointer text-red-500 transition-all active:scale-75"
+                className="cursor-pointer text-red-600 transition-all active:scale-75"
                 onClick={handleUnlikePost}
               />
             ) : (
@@ -166,7 +195,7 @@ const PostPage = () => {
           </div>
           <IoBookmarkOutline className="cursor-pointer hover:opacity-50" />
         </div>
-        <div className="">{postData.likes} likes</div>
+        <div className="">{postData.likeCount} likes</div>
         <div className="text-sm my-2">
           <pre>{postData.caption}</pre>
         </div>
