@@ -14,7 +14,7 @@ import { UserState } from "../types/user";
 import { createLogger } from "vite";
 const initialState: UserState = {
   user: null,
-  isFollowing: false,
+  isFollowing: null,
   loading: false,
   error: null,
   successMessage: null,
@@ -33,15 +33,14 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      //get user profile
       .addCase(getUserProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(getUserProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.isFollowing = action.payload.data.isFollowing;
-        // console.log(state.user.user);
-        // state.user = action.payload.data;
+        state.isFollowing = action.payload.data.isFollowing?.status || null;
       })
       .addCase(getUserProfile.rejected, (state, action) => {
         state.loading = false;
@@ -147,6 +146,9 @@ const userSlice = createSlice({
       })
       .addCase(addUserData.fulfilled, (state, action) => {
         state.loading = false;
+        state.user = action.payload.data;
+        console.log(action.payload.data);
+
         state.successMessage = action.payload.msg;
       })
       .addCase(addUserData.rejected, (state, action) => {

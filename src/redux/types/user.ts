@@ -12,6 +12,9 @@ export interface User {
   profileImage: string | null;
   updatedAt: string | null;
   email: string | null;
+  postCount: number | null;
+  followerCount: number | null;
+  followingCount: number | null;
   createdAt: string | null;
   username: string | null;
   verified: boolean;
@@ -20,7 +23,7 @@ export interface User {
 
 export interface UserState {
   user: any;
-  isFollowing: boolean | false;
+  isFollowing: string | null;
   loading: boolean;
   error: string | null;
   successMessage: string | null;

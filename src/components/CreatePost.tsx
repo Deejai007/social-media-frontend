@@ -21,8 +21,6 @@ interface Props {
 const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  // const user = useSelector((state: RootState) => state.user);
-  // const post = useSelector((state: RootState) => state.post);
   const loading = useSelector((state: RootState) => state.post.loading);
 
   const [image, setImage] = useState<File | null>(null);
@@ -55,7 +53,6 @@ const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("hi");
 
     if (image) {
       const formData = new FormData();
@@ -65,7 +62,6 @@ const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
 
       try {
         const result = await dispatch(createPost(formData));
-        // if (response.payload.success) {
         if (result.payload.success) {
           setPostSuccess(true);
 
@@ -97,8 +93,11 @@ const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
   return (
     <div
       className={`${
-        createOpen ? "" : "hidden"
-      } w-full h-full backdrop-blur-sm bg-black/40 absolute z-30 flex justify-center items-center `}
+        createOpen ? "opacity-100 scale-100" : "opacity-0 scale-90"
+      }  w-full h-full backdrop-blur-sm bg-black/40 absolute z-30 flex justify-center items-center transition-opacity transition-transform duration-300 
+      
+      ${createOpen ? "" : "hidden"}
+      `}
     >
       {postSuccess ? (
         <div className="bg-white m-3 px-4 pt-1 pb-3 max-w-96 rounded-xl  border-4 border-green-400 shadow-lg  max-w-md w-full flex items-center justify-center flex-col">
@@ -212,6 +211,7 @@ const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
               <button
                 type="button"
                 onClick={() => setCreateOpen(false)}
+                disabled={loading}
                 className="text-red-900 px-4 py-2 rounded mr-2"
               >
                 Cancel

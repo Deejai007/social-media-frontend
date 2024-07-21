@@ -17,6 +17,7 @@ import TopNav from "components/TopNav";
 import SideNav from "components/SideNav";
 import Profile from "pages/ProfilePage";
 import PostPage from "pages/PostPage";
+import Notifications from "./../pages/Notifications";
 
 const IncludeNav: React.FC = () => (
   <>
@@ -50,6 +51,7 @@ const App: React.FC = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/profile/:username" element={<Profile />} />
           <Route path="/post/:postId" element={<PostPage />} />
+          <Route path="/notifications" element={<Notifications />} />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<Login />} />

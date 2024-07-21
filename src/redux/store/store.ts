@@ -12,6 +12,7 @@ const persistConfig: PersistConfig<Roottype> = {
   key: "root",
   storage,
 };
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({

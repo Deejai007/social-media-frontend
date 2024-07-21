@@ -8,6 +8,7 @@ import { FaUserEdit } from "react-icons/fa";
 import { getUserPosts } from "redux/actions/PostActions";
 import { IoMdGrid } from "react-icons/io";
 import { CiCamera } from "react-icons/ci";
+import { sendFollowRequest } from "redux/actions/FollowActions";
 
 interface ProfileData {
   username: string;
@@ -25,10 +26,9 @@ const ProfilePage = () => {
   const dispatch: AppDispatch = useDispatch();
   const User = useSelector((state: RootState) => state.user);
   const postLoading = useSelector((state: RootState) => state.post.loading);
-
   const { username } = useParams<{ username: string }>();
-  // console.log(username);
   const [offset, setOffset] = useState(0);
+  const [modelOpen, setModelOpen] = useState(false);
   const [postsFinish, setPostsFinish] = useState(true); //to check if all posts are fetched then hide the load more button
   const [posts, setPosts] = useState<Posts>({ posts: [] });
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -70,8 +70,6 @@ const ProfilePage = () => {
         if (result.payload.success) {
           console.log(result.payload.data);
           if (result.payload.data.length < 9) setPostsFinish(false);
-          // setPosts(result.payload.data[0]);
-          // setPosts({ posts: result.payload.data });
           setPosts((prevState) => ({
             posts: [...prevState.posts, ...result.payload.data],
           }));
@@ -84,8 +82,21 @@ const ProfilePage = () => {
       console.log(error);
     }
   };
-  const handleFollow = () => {
-    console.log("follow");
+  const handleFollow = async () => {
+    try {
+      if (profileData.id) {
+        const result = await dispatch(sendFollowRequest(profileData.id));
+        if (result.payload.success) {
+          console.log(result.payload.data);
+
+          console.log(posts);
+        } else {
+          console.log(result.payload.message);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleLoadMore = () => {
     let temp = offset + 9;
@@ -98,6 +109,7 @@ const ProfilePage = () => {
     fetchData();
   }, [username]);
   useEffect(() => {
+    console.log(User);
     if (profileData.id) {
       getPosts(profileData.id);
     }
@@ -122,6 +134,7 @@ const ProfilePage = () => {
 
   return (
     <main className="bg-gray-100 max-w-4xl">
+      {/* <FollowListModel modelOpen={modelOpen} setModelOpen={setModelOpen} /> */}
       <div className=" mb-8 py-8  2md:px-12">
         <div className="flex flex-wrap items-center px-8 md:py-8">
           <div className="">
@@ -150,22 +163,32 @@ const ProfilePage = () => {
                 >
                   <FaUserEdit /> &nbsp; Edit Profile
                 </button>
-              ) : User.isFollowing ? (
-                <button
-                  className="bg-primary px-2 py-1 
-                text-white font-semibold text-sm rounded block text-center 
-                sm:inline-block block"
-                >
-                  Unollow
-                </button>
-              ) : (
+              ) : User.isFollowing == null ? (
                 <button
                   onClick={handleFollow}
                   className="bg-primary px-2 py-1 
-                text-white font-semibold text-sm rounded block text-center 
-                sm:inline-block block"
+              text-white font-semibold text-sm rounded block text-center 
+              sm:inline-block block"
                 >
                   Follow
+                </button>
+              ) : User.isFollowing == "pending" ? (
+                <button
+                  // onClick={handleFollow}
+                  className="bg-gray-700 px-2 py-1 
+            text-white font-semibold text-sm rounded block text-center 
+            sm:inline-block block"
+                >
+                  Follow request pending
+                </button>
+              ) : (
+                <button
+                  // onClick={handleFollow}
+                  className="bg-primary px-2 py-1 
+            text-white font-semibold text-sm rounded block text-center 
+            sm:inline-block block"
+                >
+                  Unfollow
                 </button>
               )}
             </div>

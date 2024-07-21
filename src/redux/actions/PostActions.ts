@@ -6,7 +6,7 @@ import { UserState } from "redux/types/user";
 // import { getSinglePost } from './PostAcitons';
 const initialState: UserState = {
   user: null,
-  isFollowing: false,
+  isFollowing: null,
   loading: false,
   error: null,
   successMessage: null,

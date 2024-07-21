@@ -102,11 +102,11 @@ const SideNav: React.FC = () => {
               </li>
               <li>
                 <Link
-                  to="/"
+                  to="/notifications"
                   className={`flex items-center p-2 text-gray-900 rounded-lg ${
                     isSelected === "noti" ? "bg-primary" : "bg-gray-300"
                   } hover:bg-primary group`}
-                  onClick={() => handleSelection("")}
+                  onClick={() => handleSelection("notifications")}
                 >
                   <span className="ms-3">Notifications</span>
                 </Link>

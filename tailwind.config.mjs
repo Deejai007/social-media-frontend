@@ -5,7 +5,8 @@ export default {
   theme: {
     extend: {
       height: {
-        128: "32rem",
+        120: "30rem",
+        192: "",
       },
       boxShadow: {
         service: "2px 2px 3px 3px rgba(0, 0, 0, 0.3)",

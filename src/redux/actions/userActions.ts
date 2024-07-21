@@ -6,7 +6,7 @@ import { log } from "console";
 
 const initialState: UserState = {
   user: null,
-  isFollowing: false,
+  isFollowing: null,
   loading: false,
   error: null,
   successMessage: null,
