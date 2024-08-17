@@ -8,15 +8,16 @@ import CreatePost from "./CreatePost";
 
 const SideNav: React.FC = () => {
   const user = useSelector((state: RootState) => state.user);
-  // console.log(user.user.username);
 
   const [isOpen, setIsOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [isSelected, setIsSelected] = useState("");
+
   const handleCreateOpen = () => {
     console.log("hi");
     setCreateOpen(!createOpen);
   };
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -78,17 +79,7 @@ const SideNav: React.FC = () => {
                   <span className="ms-3">My Profile</span>
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/follow-requests"
-                  className={`flex items-center p-2 text-gray-900 rounded-lg ${
-                    isSelected === "followers" ? "bg-primary" : "bg-gray-300"
-                  } hover:bg-primary group`}
-                  onClick={() => handleSelection("followers")}
-                >
-                  <span className="ms-3">Follow Requests</span>
-                </Link>
-              </li>
+
               <li>
                 <Link
                   to="/"

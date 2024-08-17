@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { sendFollowRequest, unfollowUser } from "redux/actions/FollowActions";
+import { getUserProfile } from "../redux/actions/userActions";
+import { AppDispatch, RootState } from "../redux/store/store";
+import { getUserPosts } from "redux/actions/PostActions";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
-import { getUserProfile } from "../redux/actions/userActions";
-import { AppDispatch, RootState } from "../redux/store/store";
+import { useEffect, useState } from "react";
 import { FaUserEdit } from "react-icons/fa";
-import { getUserPosts } from "redux/actions/PostActions";
-import { IoMdGrid } from "react-icons/io";
 import { CiCamera } from "react-icons/ci";
-import { sendFollowRequest } from "redux/actions/FollowActions";
+import { IoMdGrid } from "react-icons/io";
 
 interface ProfileData {
   username: string;
@@ -26,9 +26,10 @@ const ProfilePage = () => {
   const dispatch: AppDispatch = useDispatch();
   const User = useSelector((state: RootState) => state.user);
   const postLoading = useSelector((state: RootState) => state.post.loading);
+  const followLoading = useSelector((state: RootState) => state.follow.loading);
   const { username } = useParams<{ username: string }>();
   const [offset, setOffset] = useState(0);
-  const [modelOpen, setModelOpen] = useState(false);
+  // const [modelOpen, setModelOpen] = useState(false);
   const [postsFinish, setPostsFinish] = useState(true); //to check if all posts are fetched then hide the load more button
   const [posts, setPosts] = useState<Posts>({ posts: [] });
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -57,6 +58,7 @@ const ProfilePage = () => {
       console.log(error);
     }
   };
+
   const getPosts = async (id: string) => {
     try {
       if (profileData) {
@@ -82,14 +84,13 @@ const ProfilePage = () => {
       console.log(error);
     }
   };
+
   const handleFollow = async () => {
     try {
       if (profileData.id) {
         const result = await dispatch(sendFollowRequest(profileData.id));
         if (result.payload.success) {
           console.log(result.payload.data);
-
-          console.log(posts);
         } else {
           console.log(result.payload.message);
         }
@@ -98,16 +99,36 @@ const ProfilePage = () => {
       console.log(error);
     }
   };
+
+  const handleUnfollow = async () => {
+    try {
+      if (profileData.id) {
+        const result = await dispatch(unfollowUser(profileData.id));
+        if (result.payload.success) {
+          console.log(result.payload.data);
+
+          // console.log(posts);
+        } else {
+          console.log(result.payload.message);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleLoadMore = () => {
     let temp = offset + 9;
     setOffset(temp);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       await getProfileData();
     };
     fetchData();
   }, [username]);
+
   useEffect(() => {
     console.log(User);
     if (profileData.id) {
@@ -154,8 +175,18 @@ const ProfilePage = () => {
               <h2 className="text-3xl inline-block font-light md:mr-2 mb-2 sm:mb-0">
                 {profileData.username || "User Not found"}
               </h2>
-
-              {User.user.username == username ? (
+              {followLoading ? (
+                <ThreeDots
+                  visible={true}
+                  height="48"
+                  width="72"
+                  color="dark"
+                  radius="48"
+                  ariaLabel="three-dots-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
+              ) : User.user.username == username ? (
                 <button
                   className="bg-secondary px-2 py-1 
               text-white font-semibold text-sm rounded flex justify-center items-center text-center 
@@ -174,7 +205,7 @@ const ProfilePage = () => {
                 </button>
               ) : User.isFollowing == "pending" ? (
                 <button
-                  // onClick={handleFollow}
+                  onClick={handleUnfollow}
                   className="bg-gray-700 px-2 py-1 
             text-white font-semibold text-sm rounded block text-center 
             sm:inline-block block"
@@ -183,7 +214,7 @@ const ProfilePage = () => {
                 </button>
               ) : (
                 <button
-                  // onClick={handleFollow}
+                  onClick={handleUnfollow}
                   className="bg-primary px-2 py-1 
             text-white font-semibold text-sm rounded block text-center 
             sm:inline-block block"

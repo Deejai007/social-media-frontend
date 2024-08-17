@@ -5,6 +5,7 @@ import {
   acceptFollowRequest,
   getPendingRequests,
   sendFollowRequest,
+  unfollowUser,
 } from "redux/actions/FollowActions";
 const initialState: UserState = {
   user: null,
@@ -65,6 +66,20 @@ const followSlice = createSlice({
         console.log(action.payload);
       })
       .addCase(acceptFollowRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+        console.log(action.error);
+      })
+      //unfollow user
+      .addCase(unfollowUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(unfollowUser.fulfilled, (state, action) => {
+        state.loading = false;
+        console.log(action.payload);
+      })
+      .addCase(unfollowUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
         console.log(action.error);

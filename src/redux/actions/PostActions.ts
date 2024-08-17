@@ -75,12 +75,12 @@ export const getUserPosts = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      console.log(postData.userId);
+      // console.log(postData.userId);
       const response = await axiosApi.get(
         `/post/get-user-posts/${postData.userId}?limit=${postData.limit}&offset=${postData.offset}`,
       );
 
-      console.log(response.data);
+      // console.log(response.data);
 
       return response.data;
     } catch (error: any) {
