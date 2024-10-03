@@ -2,6 +2,7 @@ import { sendFollowRequest, unfollowUser } from "redux/actions/FollowActions";
 import { getUserProfile } from "../redux/actions/userActions";
 import { AppDispatch, RootState } from "../redux/store/store";
 import { getUserPosts } from "redux/actions/PostActions";
+import FollowPopOver from "../components/FollowPopOver";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
@@ -29,7 +30,8 @@ const ProfilePage = () => {
   const followLoading = useSelector((state: RootState) => state.follow.loading);
   const { username } = useParams<{ username: string }>();
   const [offset, setOffset] = useState(0);
-  // const [modelOpen, setModelOpen] = useState(false);
+  const [isFollowerListOpen, setIsFollowerListOpen] = useState(false);
+  const [isFollowingListOpen, setIsFollowingListOpen] = useState(false);
   const [postsFinish, setPostsFinish] = useState(true); //to check if all posts are fetched then hide the load more button
   const [posts, setPosts] = useState<Posts>({ posts: [] });
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -42,6 +44,14 @@ const ProfilePage = () => {
     id: "",
   });
 
+  const openFollowerDialog = async () => {
+    if (profileData.followerCount) setIsFollowerListOpen(true);
+  };
+  const openFollowingDialog = async () => {
+    if (profileData.followingCount) {
+      setIsFollowingListOpen(true);
+    }
+  };
   const getProfileData = async () => {
     try {
       if (username) {
@@ -156,6 +166,10 @@ const ProfilePage = () => {
   return (
     <main className="bg-gray-100 max-w-4xl">
       {/* <FollowListModel modelOpen={modelOpen} setModelOpen={setModelOpen} /> */}
+      <FollowPopOver
+        isOpen={isFollowerListOpen}
+        setIsOpen={setIsFollowerListOpen}
+      />
       <div className=" mb-8 py-8  2md:px-12">
         <div className="flex flex-wrap items-center px-8 md:py-8">
           <div className="">
@@ -231,7 +245,10 @@ const ProfilePage = () => {
                 </span>
                 &nbsp; posts
               </li>
-              <li>
+              <li
+                className="cursor-pointer "
+                onClick={() => openFollowerDialog()}
+              >
                 <span className="font-semibold text-lg">
                   {" "}
                   {profileData.followerCount}
@@ -246,7 +263,6 @@ const ProfilePage = () => {
                 &nbsp; following
               </li>
             </ul>
-
             <div className="hidden md:block">
               <pre>{profileData.bio}</pre>
             </div>
@@ -266,7 +282,7 @@ const ProfilePage = () => {
               </span>
               posts
             </li>
-            <li>
+            <li onClick={() => openFollowerDialog()}>
               <span className="font-semibold text-gray-800 block text-xl">
                 {" "}
                 {profileData.followerCount}
@@ -287,7 +303,7 @@ const ProfilePage = () => {
               <span>
                 <IoMdGrid />
               </span>
-              Posts
+              Recent Activity
             </h1>
 
             <div className="grid grid-cols-3">
@@ -295,7 +311,7 @@ const ProfilePage = () => {
                 posts.posts.map((item) => (
                   <div
                     key={item.id}
-                    className=" relative grid-span-1 border-2 border-gray-300"
+                    className=" relative grid-span-1 border-2 border-gray-300 "
                   >
                     <Link to={`/post/${item.id}`}>
                       {/* <div className="absolute w-full  hover:bg-black">hi</div> */}
@@ -306,7 +322,7 @@ const ProfilePage = () => {
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                         <span className="text-white text-lg font-bold">
-                          {item.likeCount || "0"} Likes
+                          {item.likeCount || "0"} Reactions
                         </span>
                       </div>
                     </Link>

@@ -58,6 +58,23 @@ export const acceptFollowRequest = createAsyncThunk(
     }
   },
 );
+// reject request
+export const RejectFollowRequest = createAsyncThunk(
+  "follow/rejectreq",
+  async (followerId: string, { rejectWithValue }) => {
+    try {
+      console.log("req to reject");
+      const response = await axiosApi.post("/follow/rejectreq", {
+        followerId: followerId,
+      });
+      console.log(response.data);
+      return response.data;
+    } catch (error: any) {
+      console.log(error.response.data);
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
 // unfollow user
 export const unfollowUser = createAsyncThunk(
   "follow/unfollowuser",

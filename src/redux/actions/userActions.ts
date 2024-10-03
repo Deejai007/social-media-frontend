@@ -18,7 +18,8 @@ export const getUserProfile = createAsyncThunk(
   async (username: string, { rejectWithValue }) => {
     try {
       const response = await axiosApi.get(`/user/getuser/${username}`);
-      // console.log(response.data);
+      console.log("User fetched data:");
+      console.log(response.data);
 
       return response.data;
     } catch (error: any) {
@@ -90,9 +91,6 @@ export const login = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      console.log("====================================");
-      console.log("login");
-      console.log("====================================");
       const response = await axiosApi.post("/user/login", userData, {
         withCredentials: true,
       });
@@ -145,3 +143,7 @@ export const addUserData = createAsyncThunk(
     }
   },
 );
+
+export const logout = () => ({
+  type: "LOGOUT",
+});

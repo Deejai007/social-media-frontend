@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { RiMenuFill } from "react-icons/ri";
 
@@ -55,7 +55,7 @@ const SideNav: React.FC = () => {
           } md:translate-x-0`}
           aria-label="Sidebar"
         >
-          <div className="h-full px-3 py-4 overflow-y-auto bg-mainbg border-r-2 border-slate-300">
+          <div className="h-full px-3 py-4 overflow-y-auto bg-mainbg border-r-2 border-slate-300 flex flex-col justify-between">
             <ul className="space-y-2 font-medium pt-16 flex flex-col gap-2">
               <li>
                 <Link
@@ -123,6 +123,10 @@ const SideNav: React.FC = () => {
                 <span className="ms-3">Create</span>
               </button>
             </ul>
+            {/* Move the logout button to the bottom
+            <button className=" p-2 mx-8 text-gray-900 rounded-lg hover:bg-red-400">
+              Logout
+            </button> */}
           </div>
         </div>
       </aside>

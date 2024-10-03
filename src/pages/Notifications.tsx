@@ -1,18 +1,17 @@
-import React, { useState } from "react";
-import TextareaAutosize from "react-textarea-autosize";
-import { FiUpload } from "react-icons/fi";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
-import { RxCross2 } from "react-icons/rx";
-import { BsEmojiSmile } from "react-icons/bs";
-import { SiTicktick } from "react-icons/si";
-
 import { AppDispatch, RootState } from "redux/store/store";
-import { useDispatch, useSelector } from "react-redux";
 import { createPost } from "../redux/actions/PostActions";
-import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import TextareaAutosize from "react-textarea-autosize";
+import FollowRequests from "components/FollowRequests";
 import { ThreeDots } from "react-loader-spinner";
 import { useNavigate } from "react-router-dom";
-import FollowRequests from "components/FollowRequests";
+import { BsEmojiSmile } from "react-icons/bs";
+import { SiTicktick } from "react-icons/si";
+import { FiUpload } from "react-icons/fi";
+import { RxCross2 } from "react-icons/rx";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 const Notifications: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();

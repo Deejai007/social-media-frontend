@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
-import axiosApi from "utils/axiosconfig";
-import { UserState } from "redux/types/user";
 // import { fetchPosts } from 'redux/actions/postActions';
 // import { getSinglePost } from './PostAcitons';
+import { UserState } from "redux/types/user";
+import axiosApi from "utils/axiosconfig";
+import axios from "axios";
 const initialState: UserState = {
   user: null,
   isFollowing: null,

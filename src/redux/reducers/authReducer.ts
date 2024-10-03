@@ -8,10 +8,9 @@ import {
   verify,
   addUserData,
 } from "redux/actions/userActions";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 import { UserState } from "../types/user";
-import { createLogger } from "vite";
 const initialState: UserState = {
   user: null,
   isFollowing: null,
