@@ -25,6 +25,7 @@ const SideNav: React.FC = () => {
   const handleSelection = (item: string) => {
     setIsSelected(item);
   };
+  console.log(user);
 
   return (
     <div>

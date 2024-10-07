@@ -14,16 +14,18 @@ import { RxCross2 } from "react-icons/rx";
 
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { logout } from "redux/actions/userActions";
 
 const Settings: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   // const userId = useSelector((state: RootState) => state.user.user.id);
 
   // const [activeTab, setActiveTab] = useState("requests");
   const [activeTab, setActiveTab] = useState("general");
   const handleLogout = async () => {
-    const result = await dispatch("LOGOUT");
+    await dispatch(logout());
+    window.location.href = "/login";
   };
 
   return (

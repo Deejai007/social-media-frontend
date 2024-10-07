@@ -7,6 +7,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import App from "components/App";
 import { ToastContainer } from "react-toastify";
 import { BrowserRouter } from "react-router-dom";
+// import { AuthProvider } from "utils/AuthContext";
 
 const container = document.getElementById("root") as HTMLDivElement;
 const root = createRoot(container);
@@ -27,7 +28,9 @@ root.render(
         theme="light"
       />
       <BrowserRouter>
+        {/* <AuthProvider> */}
         <App />
+        {/* </AuthProvider> */}
       </BrowserRouter>
     </PersistGate>
   </Provider>,

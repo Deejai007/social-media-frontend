@@ -7,6 +7,7 @@ import {
   sendOtp,
   verify,
   addUserData,
+  logout,
 } from "redux/actions/userActions";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -28,6 +29,9 @@ const userSlice = createSlice({
     },
     clearSuccessMessage: (state) => {
       state.successMessage = null;
+    },
+    logout: (state) => {
+      return initialState;
     },
   },
   extraReducers: (builder) => {
@@ -153,6 +157,10 @@ const userSlice = createSlice({
       .addCase(addUserData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase("LOGOUT", (state) => {
+        Object.assign(state, initialState);
+        console.log("loggedout", state);
       });
   },
 });

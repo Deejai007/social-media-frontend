@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import axios from "axios";
 import axiosApi from "utils/axiosconfig";
 import { UserState } from "redux/types/user";
@@ -143,7 +143,15 @@ export const addUserData = createAsyncThunk(
     }
   },
 );
+// export const Logout = createAsyncThunk(
+//   "user/logout",
+//   async (_, { rejectWithValue }) => {},
+// );
 
-export const logout = () => ({
-  type: "LOGOUT",
-});
+// export const logout = () => {
+//   console.log("====================================");
+//   console.log("Hi");
+//   console.log("====================================");
+//   return { type: "auth/logout" };
+// };
+export const logout = createAction("LOGOUT");

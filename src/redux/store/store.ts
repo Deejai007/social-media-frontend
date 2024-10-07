@@ -2,7 +2,15 @@ import { configureStore, Tuple } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import appReducer from "../reducers/index";
-import { PersistConfig } from "redux-persist";
+import {
+  PersistConfig,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from "redux-persist";
 import thunk from "redux-thunk";
 
 type Roottype = ReturnType<typeof appReducer>;
@@ -17,6 +25,12 @@ const persistedReducer = persistReducer(persistConfig, appReducer);
 
 const store = configureStore({
   reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
 });
 
 const persistor = persistStore(store);

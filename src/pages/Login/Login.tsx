@@ -65,13 +65,23 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-gray-100 text-gray-900 flex justify-center ">
-      <div className="max-w-screen-xl  m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
+    <div className="h-screen bg-[url('/public/assets/purplebg1.jpg')] bg-cover text-gray-900 flex justify-center ">
+      <div className="max-w-screen-xl m-0 sm:m-10   bg-no-repeat  bg-[url('/public/assets/purplebg1.jpg')] sm:bg-white  shadow sm:rounded-lg flex justify-center flex-1">
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-4 flex justify-center items-center">
           <div className=" flex flex-col items-center bg-gray-100 rounded p-12">
-            <h1 className="text-2xl xl:text-3xl font-extrabold ">
+            <div className="flex flex-row gap-4 -ml-4">
+              <img
+                src="public/assets/logo.png"
+                className="h-8 -mr-2"
+                alt="Logo"
+              />
+              <span className="font-sevillana text-4xl font-semibold ">
+                treiwo
+              </span>
+            </div>
+            {/* <h1 className="text-2xl xl:text-3xl font-extrabold ">
               Welcome back!
-            </h1>
+            </h1> */}
             <div className="w-full flex-1 mt-8">
               <div className="flex flex-col items-center">
                 <button className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline">
@@ -122,11 +132,7 @@ const SignUp: React.FC = () => {
                     value={password}
                     onChange={handleChange}
                   />
-                  <Link to="/forgot-password">
-                    <p className="underline text-secondary px-2">
-                      Forgot password?
-                    </p>
-                  </Link>
+
                   <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
                     {loading ? (
                       <ThreeDots
@@ -157,6 +163,11 @@ const SignUp: React.FC = () => {
                       </>
                     )}
                   </button>
+                  <Link to="/forgot-password">
+                    <p className="underline text-secondary px-2">
+                      Forgot password?
+                    </p>
+                  </Link>
                   <p className="mt-4 text-sm text-gray-600 text-center">
                     New user? &nbsp;
                     <span className="underline text-base">

@@ -19,6 +19,7 @@ import Profile from "pages/ProfilePage";
 import PostPage from "pages/PostPage";
 import Notifications from "./../pages/Notifications";
 import Settings from "./../pages/Settings";
+import { useEffect } from "react";
 
 const IncludeNav: React.FC = () => (
   <>
@@ -31,6 +32,9 @@ const IncludeNav: React.FC = () => (
 );
 
 const App: React.FC = () => {
+  // useEffect(() => {
+  //   console.log("Hi");
+  // }, []);
   return (
     <div className="">
       <ToastContainer
@@ -54,14 +58,15 @@ const App: React.FC = () => {
           <Route path="/post/:postId" element={<PostPage />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/" element={<Home />} />
         </Route>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/password-reset/:token" element={<PasswordReset />} />
         <Route path="/create-profile" element={<CreateProfile />} />
+        <Route path="*" element={<Login />} />
       </Routes>
     </div>
   );

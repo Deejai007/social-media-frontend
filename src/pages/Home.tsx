@@ -16,26 +16,14 @@ const ComponentName: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("Hi");
     console.log(user);
-  }, [user]);
+  }, []);
   return (
     <div className="h-screen">
       Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sint veritatis
       mollitia nemo sequi harum perferendis voluptate suscipit vitae, similique
       nihil?
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
       <br />
       <br />
       <br />

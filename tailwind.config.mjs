@@ -2,6 +2,7 @@
 
 export default {
   content: ["./src/**/*.{mjs,js,ts,jsx,tsx}"],
+
   theme: {
     extend: {
       height: {
@@ -60,8 +61,5 @@ export default {
   },
   plugins: [
     // require('@tailwindcss/forms'),
-    // require('@tailwindcss/typography'),
-    // require('@tailwindcss/aspect-ratio'),
-    // require('@tailwindcss/line-clamp')
   ],
 };
