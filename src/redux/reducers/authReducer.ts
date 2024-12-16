@@ -43,7 +43,8 @@ const userSlice = createSlice({
       })
       .addCase(getUserProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.isFollowing = action.payload.data.isFollowing?.status || null;
+        console.log(action.payload.data);
+        state.isFollowing = action.payload.data.isFollowing || null;
       })
       .addCase(getUserProfile.rejected, (state, action) => {
         state.loading = false;

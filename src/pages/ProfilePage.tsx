@@ -2,6 +2,7 @@ import { sendFollowRequest, unfollowUser } from "redux/actions/FollowActions";
 import { getUserProfile } from "../redux/actions/userActions";
 import { AppDispatch, RootState } from "../redux/store/store";
 import { getUserPosts } from "redux/actions/PostActions";
+import { useNavigate } from "react-router-dom";
 import FollowPopOver from "../components/FollowPopOver";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
@@ -15,6 +16,7 @@ interface ProfileData {
   username: string;
   postCount?: number;
   followerCount?: number;
+  isFollowing?: string;
   followingCount?: number;
   bio?: string;
   profileImage?: string;
@@ -24,14 +26,17 @@ interface Posts {
   posts: any[];
 }
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
   const User = useSelector((state: RootState) => state.user);
   const postLoading = useSelector((state: RootState) => state.post.loading);
   const followLoading = useSelector((state: RootState) => state.follow.loading);
+
   const { username } = useParams<{ username: string }>();
   const [offset, setOffset] = useState(0);
   const [isFollowerListOpen, setIsFollowerListOpen] = useState(false);
   const [isFollowingListOpen, setIsFollowingListOpen] = useState(false);
+  const [followState, setFollowState] = useState(null);
   const [postsFinish, setPostsFinish] = useState(true); //to check if all posts are fetched then hide the load more button
   const [posts, setPosts] = useState<Posts>({ posts: [] });
   const [profileData, setProfileData] = useState<ProfileData>({
@@ -39,6 +44,7 @@ const ProfilePage = () => {
     postCount: 0,
     followerCount: 0,
     followingCount: 0,
+    isFollowing: undefined,
     bio: "",
     profileImage: "",
     id: "",
@@ -52,16 +58,18 @@ const ProfilePage = () => {
       setIsFollowingListOpen(true);
     }
   };
+
   const getProfileData = async () => {
     try {
       if (username) {
         const result = await dispatch(getUserProfile(username));
 
         if (result.payload.success) {
-          console.log(result.payload.data.user);
+          console.log(result.payload.data);
           setProfileData(result.payload.data.user);
         } else {
           console.log(result.payload.message);
+          // navigate("/login");
         }
       }
     } catch (error) {
@@ -80,12 +88,12 @@ const ProfilePage = () => {
           }),
         );
         if (result.payload.success) {
-          console.log(result.payload.data);
+          console.log("Posts fetched: ", result.payload.data);
           if (result.payload.data.length < 9) setPostsFinish(false);
           setPosts((prevState) => ({
             posts: [...prevState.posts, ...result.payload.data],
           }));
-          console.log(posts);
+          // console.log(posts);
         } else {
           console.log(result.payload.message);
         }
@@ -109,14 +117,14 @@ const ProfilePage = () => {
       console.log(error);
     }
   };
-
-  const handleUnfollow = async () => {
+  const handleUnfollow = async (mode: string) => {
     try {
       if (profileData.id) {
-        const result = await dispatch(unfollowUser(profileData.id));
+        const result = await dispatch(
+          unfollowUser({ followingId: profileData.id, mode: mode }),
+        );
         if (result.payload.success) {
-          console.log(result.payload.data);
-
+          // console.log(result.payload.data);
           // console.log(posts);
         } else {
           console.log(result.payload.message);
@@ -138,9 +146,12 @@ const ProfilePage = () => {
     };
     fetchData();
   }, [username]);
+  // useEffect(() => {
+  //   // console.log("After==", followState.isFollowing);
+  // }, [followState]);
 
   useEffect(() => {
-    console.log(User);
+    // console.log(User);
     if (profileData.id) {
       getPosts(profileData.id);
     }
@@ -208,7 +219,7 @@ const ProfilePage = () => {
                 >
                   <FaUserEdit /> &nbsp; Edit Profile
                 </button>
-              ) : User.isFollowing == null ? (
+              ) : profileData.isFollowing == null ? (
                 <button
                   onClick={handleFollow}
                   className="bg-primary px-2 py-1 
@@ -217,9 +228,9 @@ const ProfilePage = () => {
                 >
                   Follow
                 </button>
-              ) : User.isFollowing == "pending" ? (
+              ) : profileData.isFollowing == "pending" ? (
                 <button
-                  onClick={handleUnfollow}
+                  onClick={() => handleUnfollow("reqCancel")}
                   className="bg-gray-700 px-2 py-1 
             text-white font-semibold text-sm rounded block text-center 
             sm:inline-block block"
@@ -228,7 +239,7 @@ const ProfilePage = () => {
                 </button>
               ) : (
                 <button
-                  onClick={handleUnfollow}
+                  onClick={() => handleUnfollow("reqUnfollow")}
                   className="bg-primary px-2 py-1 
             text-white font-semibold text-sm rounded block text-center 
             sm:inline-block block"

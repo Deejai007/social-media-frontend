@@ -15,9 +15,9 @@ const appReducer = combineReducers({
 const rootReducer = (state: any, action: any) => {
   if (action.type === "LOGOUT") {
     // Reset all states when user logs out
+
     state = undefined;
   }
-
   return appReducer(state, action);
 };
 

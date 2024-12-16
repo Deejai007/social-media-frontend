@@ -66,7 +66,7 @@ const SignUp: React.FC = () => {
 
   return (
     <div className="h-screen bg-[url('/public/assets/purplebg1.jpg')] bg-cover text-gray-900 flex justify-center ">
-      <div className="max-w-screen-xl m-0 sm:m-10   bg-no-repeat  bg-[url('/public/assets/purplebg1.jpg')] sm:bg-white  shadow sm:rounded-lg flex justify-center flex-1">
+      <div className="max-w-screen-xl m-0 sm:m-10 bg-[url('/public/assets/purplebg1.jpg')] sm:bg-white  shadow sm:rounded-lg flex justify-center flex-1">
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-4 flex justify-center items-center">
           <div className=" flex flex-col items-center bg-gray-100 rounded p-12">
             <div className="flex flex-row gap-4 -ml-4">
@@ -79,9 +79,6 @@ const SignUp: React.FC = () => {
                 treiwo
               </span>
             </div>
-            {/* <h1 className="text-2xl xl:text-3xl font-extrabold ">
-              Welcome back!
-            </h1> */}
             <div className="w-full flex-1 mt-8">
               <div className="flex flex-col items-center">
                 <button className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline">

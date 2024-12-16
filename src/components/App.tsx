@@ -16,10 +16,14 @@ import CreateProfile from "pages/CreateProfile";
 import TopNav from "components/TopNav";
 import SideNav from "components/SideNav";
 import Profile from "pages/ProfilePage";
+import Create from "pages/Create/Create";
 import PostPage from "pages/PostPage";
 import Notifications from "./../pages/Notifications";
 import Settings from "./../pages/Settings";
+
 import { useEffect } from "react";
+import ProtectedRoute from "./ProtectedRoute";
+import MyProfile from "pages/MyProfile";
 
 const IncludeNav: React.FC = () => (
   <>
@@ -52,13 +56,71 @@ const App: React.FC = () => {
       ></ToastContainer>
 
       <Routes>
-        <Route element={<IncludeNav />}>
-          <Route path="/home" element={<Home />} />
-          <Route path="/profile/:username" element={<Profile />} />
-          <Route path="/post/:postId" element={<PostPage />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/" element={<Home />} />
+        <Route
+          element={
+            <ProtectedRoute>
+              <IncludeNav />
+            </ProtectedRoute>
+          }
+        >
+          {/* <Route path="/home" element={<Home />} /> */}
+          <Route
+            path="/home"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile/:username"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-profile/"
+            element={
+              <ProtectedRoute>
+                <MyProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/post/:postId"
+            element={
+              <ProtectedRoute>
+                <PostPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <ProtectedRoute>
+                <Notifications />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/create"
+            element={
+              <ProtectedRoute>
+                <Create />
+              </ProtectedRoute>
+            }
+          />
+          {/* <Route path="/" element={<Home />} /> */}
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />

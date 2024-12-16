@@ -62,8 +62,8 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-gray-100 text-gray-900 flex justify-center ">
-      <div className="max-w-screen-xl  m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
+    <div className="h-screen bg-[url('/public/assets/purplebg1.jpg')] bg-cover text-gray-900 flex justify-center ">
+      <div className="max-w-screen-xl m-0 sm:m-10 bg-[url('/public/assets/purplebg1.jpg')] sm:bg-white  shadow sm:rounded-lg flex justify-center flex-1">
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-4 flex justify-center items-center">
           <div className=" flex flex-col items-center bg-gray-100 rounded p-12">
             <h1 className="text-2xl xl:text-3xl font-extrabold ">Sign up</h1>

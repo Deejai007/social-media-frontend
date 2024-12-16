@@ -1,249 +1,240 @@
-import React, { useState } from "react";
-import TextareaAutosize from "react-textarea-autosize";
-import { FiUpload } from "react-icons/fi";
-import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
-import { RxCross2 } from "react-icons/rx";
-import { BsEmojiSmile } from "react-icons/bs";
-import { SiTicktick } from "react-icons/si";
+// import React, { useState } from "react";
+// import TextareaAutosize from "react-textarea-autosize";
+// import { FiUpload } from "react-icons/fi";
+// import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+// import { RxCross2 } from "react-icons/rx";
+// import { BsEmojiSmile } from "react-icons/bs";
+// import { SiTicktick } from "react-icons/si";
 
-import { AppDispatch, RootState } from "redux/store/store";
-import { useDispatch, useSelector } from "react-redux";
-import { createPost } from "../redux/actions/PostActions";
-import { toast } from "react-toastify";
-import { ThreeDots } from "react-loader-spinner";
-import { useNavigate } from "react-router-dom";
+// import { AppDispatch, RootState } from "redux/store/store";
+// import { useDispatch, useSelector } from "react-redux";
+// import { createPost } from "../redux/actions/PostActions";
+// import { toast } from "react-toastify";
+// import { ThreeDots } from "react-loader-spinner";
+// import { useNavigate } from "react-router-dom";
 
-interface Props {
-  createOpen: boolean;
-  setCreateOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+// interface Props {
+//   createOpen: boolean;
+//   setCreateOpen: React.Dispatch<React.SetStateAction<boolean>>;
+// }
 
-const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
-  const dispatch: AppDispatch = useDispatch();
-  const navigate = useNavigate();
-  const loading = useSelector((state: RootState) => state.post.loading);
+// const CreatePost: React.FC<Props> = ({ createOpen, setCreateOpen }) => {
+//   const dispatch: AppDispatch = useDispatch();
+//   const navigate = useNavigate();
+//   const loading = useSelector((state: RootState) => state.post.loading);
 
-  const [image, setImage] = useState<File | null>(null);
-  const [caption, setCaption] = useState<string>("");
-  const [location, setLocation] = useState<string>("");
-  const [emojiDialogOpen, setEmojiDialogOpen] = useState(false);
-  const [postSuccess, setPostSuccess] = useState(false);
-  const [postPath, setPostPath] = useState();
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+//   const [image, setImage] = useState<File | null>(null);
+//   const [caption, setCaption] = useState<string>("");
+//   const [location, setLocation] = useState<string>("");
+//   const [emojiDialogOpen, setEmojiDialogOpen] = useState(false);
+//   const [postSuccess, setPostSuccess] = useState(false);
+//   const [postPath, setPostPath] = useState();
+//   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImage(file);
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-    }
-  };
+//   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const file = e.target.files?.[0];
+//     if (file) {
+//       setImage(file);
+//       const reader = new FileReader();
+//       reader.readAsDataURL(file);
+//       reader.onloadend = () => {
+//         setImagePreview(reader.result as string);
+//       };
+//     }
+//   };
 
-  const handleEmojiClick = (emoji: EmojiClickData) => {
-    setCaption((prevCaption) => prevCaption + emoji.emoji);
-  };
+//   const handleEmojiClick = (emoji: EmojiClickData) => {
+//     setCaption((prevCaption) => prevCaption + emoji.emoji);
+//   };
 
-  const handleDeleteImage = () => {
-    setImage(null);
-    setImagePreview(null);
-  };
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+//   const handleDeleteImage = () => {
+//     setImage(null);
+//     setImagePreview(null);
+//   };
 
-    if (image) {
-      const formData = new FormData();
-      formData.append("image", image, image.name);
-      formData.append("caption", caption);
-      formData.append("location", location);
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
 
-      try {
-        const result = await dispatch(createPost(formData));
-        if (result.payload.success) {
-          setPostSuccess(true);
+//     if (image) {
+//       const formData = new FormData();
+//       formData.append("image", image, image.name);
+//       formData.append("caption", caption);
+//       formData.append("location", location);
 
-          setPostPath(result.payload.postId);
-          console.log(result.payload.message);
-        } else {
-          console.log(result.payload.message);
-          toast.info(result.payload.message, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-          });
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-  const handleNavPost = () => {
-    setPostSuccess(false);
-    setCreateOpen(false);
-    navigate(`/post/${postPath}`);
-  };
-  return (
-    <div
-      className={`${
-        createOpen ? "opacity-100 scale-100" : "opacity-0 scale-90"
-      }  w-full h-full backdrop-blur-sm bg-black/40 absolute z-30 flex justify-center items-center transition-opacity transition-transform duration-300 
-      
-      ${createOpen ? "" : "hidden"}
-      `}
-    >
-      {postSuccess ? (
-        <div className="bg-white m-3 px-4 pt-1 pb-3 max-w-96 rounded-xl  border-4 border-green-400 shadow-lg  max-w-md w-full flex items-center justify-center flex-col">
-          <span className="text-5xl p-4">
-            <SiTicktick />
-          </span>
-          <h1 className="py-1">Posted successfully!</h1>
-          <button
-            className="bg-primary m-2 px-2 py-1 rounded "
-            onClick={handleNavPost}
-          >
-            View Post
-          </button>
-        </div>
-      ) : (
-        <div className="bg-white m-3 px-4 pt-1 pb-3 rounded-3xl shadow-lg max-w-md w-full">
-          <div className="text-xl font-bold text-center border-b-2 p-2 border-gray-400">
-            Create new post
-          </div>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              {imagePreview ? (
-                <div className="relative flex items-center justify-center">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="object-contain mb-4 min-h-64 max-h-64"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleDeleteImage}
-                    className="absolute top-0 right-0 bg-red-500 text-white text-lg p-1 rounded-full m-2"
-                  >
-                    <RxCross2 />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center w-full">
-                  <label
-                    htmlFor="dropzone-file"
-                    className="flex flex-col items-center justify-center w-full h-72 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
-                  >
-                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <FiUpload />
-                      <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                        <span className="font-semibold">Click to upload</span>{" "}
-                        or drag and drop
-                      </p>
-                    </div>
-                    <input
-                      id="dropzone-file"
-                      type="file"
-                      required
-                      className="hidden"
-                      onChange={handleImageChange}
-                    />
-                  </label>
-                </div>
-              )}
-            </div>
-            <div className="mb-4">
-              {/* <TextareaAutosize
-                name="bio"
-                placeholder="Write a caption..."
-                onChange={(e) => {
-                  setCaption(e.target.value);
-                  console.log(caption);
-                }}
-                value={caption}
-                id="bio"  
-                className="h-20 border mt-1 rounded px-4 w-full bg-gray-50 p-1"
-              /> */}
-              <textarea
-                name="bio"
-                placeholder="Write a caption..."
-                onChange={(e) => {
-                  setCaption(e.target.value);
-                  console.log(caption);
-                }}
-                value={caption}
-                id="bio"
-                className="h-20 border mt-1 rounded px-4 w-full bg-gray-50 p-1"
-              />
-              <div className="px-4 text-xl mb-2">
-                <span>
-                  <BsEmojiSmile
-                    onClick={() => setEmojiDialogOpen(!emojiDialogOpen)}
-                  />
-                </span>
-              </div>
+//       try {
+//         const result = await dispatch(createPost(formData));
+//         if (result.payload.success) {
+//           setPostSuccess(true);
+//           setPostPath(result.payload.postId);
 
-              <hr />
-              <div>
-                <input
-                  type="text"
-                  className="bg-gray-100 m-2 py-2  rounded-sm px-4"
-                  value={location}
-                  placeholder="Add Location"
-                  onChange={(e) => {
-                    setLocation(e.target.value);
-                  }}
-                />
-              </div>
-            </div>
-            <div className="absolute">
-              {emojiDialogOpen && (
-                <EmojiPicker onEmojiClick={handleEmojiClick} />
-              )}
-            </div>
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => setCreateOpen(false)}
-                disabled={loading}
-                className="text-red-900 px-4 py-2 rounded mr-2"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className={`px-4 py-2 w-20 flex items-center justify-center rounded text-white ${
-                  !image ? "bg-gray-500 cursor-not-allowed" : "bg-primary"
-                }`}
-                disabled={image ? false : true}
-              >
-                {loading ? (
-                  <ThreeDots
-                    visible={true}
-                    height="24"
-                    width="36"
-                    color="white"
-                    radius="8"
-                    ariaLabel="three-dots-loading"
-                    wrapperStyle={{}}
-                    wrapperClass=""
-                  />
-                ) : (
-                  "Post"
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-    </div>
-  );
-};
+//           setImage(null);
+//           setCaption("");
+//           setLocation("");
+//           setImagePreview(null);
+//         } else {
+//           toast.info(result.payload.message, {
+//             position: "top-right",
+//             autoClose: 5000,
+//           });
+//         }
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     }
+//   };
 
-export default CreatePost;
+//   const handleNavPost = () => {
+//     setPostSuccess(false);
+//     setCreateOpen(false);
+//     navigate(`/post/${postPath}`);
+//   };
+
+//   return (
+//     <div
+//       className={`${
+//         createOpen ? "opacity-100 scale-100" : "opacity-0 scale-90"
+//       } fixed inset-0 z-50 flex items-center justify-center bg-black/50 transition-transform duration-300 ${
+//         createOpen ? "" : "hidden"
+//       }`}
+//     >
+//       {postSuccess ? (
+//         <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-md w-full">
+//           <div className="text-green-500 text-5xl mb-4">
+//             <SiTicktick />
+//           </div>
+//           <h1 className="text-lg font-bold">Posted Successfully!</h1>
+//           <button
+//             onClick={handleNavPost}
+//             className="mt-4 px-6 py-2 bg-primary text-white rounded hover:bg-primary-dark transition"
+//           >
+//             View Post
+//           </button>
+//         </div>
+//       ) : (
+//         <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+//           <h2 className="text-xl font-semibold text-center mb-4">
+//             Create New Post
+//           </h2>
+//           <form onSubmit={handleSubmit}>
+//             {/* Image Upload Section */}
+//             <div className="mb-4">
+//               {imagePreview ? (
+//                 <div className="relative">
+//                   <img
+//                     src={imagePreview}
+//                     alt="Preview"
+//                     className="w-full rounded-lg object-cover h-64"
+//                   />
+//                   <button
+//                     type="button"
+//                     onClick={handleDeleteImage}
+//                     className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full"
+//                     aria-label="Delete Image"
+//                   >
+//                     <RxCross2 />
+//                   </button>
+//                 </div>
+//               ) : (
+//                 <label
+//                   htmlFor="image-upload"
+//                   className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg bg-gray-50 cursor-pointer hover:border-primary transition"
+//                 >
+//                   <FiUpload className="text-4xl text-gray-500" />
+//                   <p className="text-sm text-gray-500 mt-2">
+//                     Click to upload or drag and drop
+//                   </p>
+//                   <input
+//                     id="image-upload"
+//                     type="file"
+//                     className="hidden"
+//                     onChange={handleImageChange}
+//                     required
+//                   />
+//                 </label>
+//               )}
+//             </div>
+
+//             {/* Caption Input */}
+//             <div className="mb-4">
+//               <label
+//                 htmlFor="caption-input"
+//                 className="block text-gray-700 font-medium mb-2"
+//               >
+//                 Caption
+//               </label>
+//               <TextareaAutosize
+//                 placeholder="Write a caption..."
+//                 value={caption}
+//                 onChange={(e) => setCaption(e.target.value)}
+//                 className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary"
+//               />
+//               <div className="text-right text-gray-400 text-sm">
+//                 {caption.length} / 250
+//               </div>
+//             </div>
+
+//             {/* Emoji Picker */}
+//             <div className="mb-4">
+//               <button
+//                 type="button"
+//                 onClick={() => setEmojiDialogOpen(!emojiDialogOpen)}
+//                 className="text-xl text-gray-500 hover:text-primary transition"
+//                 aria-label="Add Emoji"
+//               >
+//                 <BsEmojiSmile />
+//               </button>
+//               {emojiDialogOpen && (
+//                 <EmojiPicker onEmojiClick={handleEmojiClick} />
+//               )}
+//             </div>
+
+//             {/* Location Input */}
+//             <label
+//               htmlFor="caption-input"
+//               className="block text-gray-700 font-medium mb-2"
+//             >
+//               Add Location
+//             </label>
+//             <div className="mb-4">
+//               <input
+//                 type="text"
+//                 placeholder="Add Location"
+//                 value={location}
+//                 onChange={(e) => setLocation(e.target.value)}
+//                 className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary"
+//               />
+//             </div>
+
+//             {/* Form Buttons */}
+//             <div className="flex justify-end">
+//               <button
+//                 type="button"
+//                 onClick={() => setCreateOpen(false)}
+//                 className="px-4 py-2 mr-2 bg-gray-200 rounded hover:bg-gray-300 transition"
+//               >
+//                 Cancel
+//               </button>
+//               <button
+//                 type="submit"
+//                 className={`px-4 py-2 bg-primary text-white rounded ${
+//                   loading
+//                     ? "opacity-50 cursor-not-allowed"
+//                     : "hover:bg-primary-dark transition"
+//                 }`}
+//                 disabled={!image || loading}
+//               >
+//                 {loading ? (
+//                   <ThreeDots visible height="24" width="24" color="white" />
+//                 ) : (
+//                   "Post"
+//                 )}
+//               </button>
+//             </div>
+//           </form>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default CreatePost;

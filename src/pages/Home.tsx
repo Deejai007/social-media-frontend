@@ -18,6 +18,8 @@ const ComponentName: React.FC = () => {
   useEffect(() => {
     console.log("Hi");
     console.log(user);
+    if (!user.user) console.log("Not logged in");
+    else console.log("logged in");
   }, []);
   return (
     <div className="h-screen">

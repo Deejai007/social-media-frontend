@@ -35,7 +35,11 @@ const followSlice = createSlice({
       })
       .addCase(sendFollowRequest.fulfilled, (state, action) => {
         state.loading = false;
-        state.isFollowing = action.payload.data.isFollowing;
+        console.log(
+          "Follow request status update to ",
+          action.payload.data.status,
+        );
+        state.isFollowing = action.payload.data.status;
       })
       .addCase(sendFollowRequest.rejected, (state, action) => {
         state.loading = false;
@@ -70,14 +74,16 @@ const followSlice = createSlice({
         state.error = action.payload as string;
         console.log(action.error);
       })
-      //unfollow user
+      //unfollow userfoll
       .addCase(unfollowUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(unfollowUser.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload);
+        state.isFollowing = null;
+
+        console.log("User unfollowed: ", action.payload);
       })
       .addCase(unfollowUser.rejected, (state, action) => {
         state.loading = false;

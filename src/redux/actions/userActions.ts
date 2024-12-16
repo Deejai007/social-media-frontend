@@ -20,7 +20,6 @@ export const getUserProfile = createAsyncThunk(
       const response = await axiosApi.get(`/user/getuser/${username}`);
       console.log("User fetched data:");
       console.log(response.data);
-
       return response.data;
     } catch (error: any) {
       console.log(error.response.data);
@@ -39,7 +38,7 @@ export const register = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      console.log(userData);
+      // console.log(userData);
 
       const response = await axiosApi.post("/user/register", userData);
 
@@ -70,9 +69,9 @@ export const verify = createAsyncThunk(
   ) => {
     try {
       const response = await axiosApi.post("/user/verify", verificationData);
-      console.log("====================================");
-      console.log(response);
-      console.log("====================================");
+      // console.log("====================================");
+      // console.log(response);
+      // console.log("====================================");
       return response.data;
     } catch (error: any) {
       console.log(error.response.data);
@@ -107,7 +106,7 @@ export const forgotPassword = createAsyncThunk(
   async (email: string, { rejectWithValue }) => {
     try {
       const response = await axiosApi.post("/user/forgotpassword", { email });
-      console.log(response.data);
+      // console.log(response.data);
 
       return response.data;
     } catch (error: any) {

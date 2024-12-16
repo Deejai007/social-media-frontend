@@ -4,19 +4,19 @@ import { RiMenuFill } from "react-icons/ri";
 
 import { RootState } from "redux/store/store";
 import { Link } from "react-router-dom";
-import CreatePost from "./CreatePost";
+// import CreatePost from "./CreatePost";
 
 const SideNav: React.FC = () => {
   const user = useSelector((state: RootState) => state.user);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [createOpen, setCreateOpen] = useState(false);
+  // const [createOpen, setCreateOpen] = useState(false);
   const [isSelected, setIsSelected] = useState("");
 
-  const handleCreateOpen = () => {
-    console.log("hi");
-    setCreateOpen(!createOpen);
-  };
+  // const handleCreateOpen = () => {
+  //   console.log("hi");
+  //   setCreateOpen(!createOpen);
+  // };
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -24,13 +24,16 @@ const SideNav: React.FC = () => {
 
   const handleSelection = (item: string) => {
     setIsSelected(item);
+    if (isOpen) {
+      setIsOpen(false);
+    }
   };
-  console.log(user);
+  // console.log(user);
 
   return (
     <div>
-      <CreatePost createOpen={createOpen} setCreateOpen={setCreateOpen} />
-
+      {/* <CreatePost createOpen={createOpen} setCreateOpen={setCreateOpen} /> */}
+      Trwi
       <aside className="z-10 ">
         {/* blur window */}
         <div
@@ -44,7 +47,7 @@ const SideNav: React.FC = () => {
           onClick={toggleSidebar}
           aria-controls="default-sidebar"
           type="button"
-          className="absolute mt-4 right-4 md:hidden text-3xl z-[25]"
+          className="fixed  right-4 md:hidden text-3xl z-[25]"
         >
           <RiMenuFill />
         </button>
@@ -53,7 +56,7 @@ const SideNav: React.FC = () => {
           id="default-sidebar"
           className={`fixed top-0 left-0 w-64 h-screen transition-transform ${
             isOpen ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0`}
+          } md:translate-x-0 `}
           aria-label="Sidebar"
         >
           <div className="h-full px-3 py-4 overflow-y-auto bg-mainbg border-r-2 border-slate-300 flex flex-col justify-between">
@@ -114,15 +117,25 @@ const SideNav: React.FC = () => {
                   <span className="ms-3">Settings</span>
                 </Link>
               </li>
-
-              <button
+              <li>
+                <Link
+                  to="/create"
+                  className={`flex items-center p-2 text-gray-900 rounded-lg ${
+                    isSelected === "create" ? "bg-primary" : "bg-gray-300"
+                  } hover:bg-primary group`}
+                  onClick={() => handleSelection("create")}
+                >
+                  <span className="ms-3">Create</span>
+                </Link>
+              </li>
+              {/* <button 
                 onClick={handleCreateOpen}
                 className={`flex items-center p-2 text-gray-900 rounded-lg ${
                   isSelected === "create" ? "bg-primary" : "bg-gray-300"
                 } hover:bg-primary group`}
               >
                 <span className="ms-3">Create</span>
-              </button>
+              </button> */}
             </ul>
             {/* Move the logout button to the bottom
             <button className=" p-2 mx-8 text-gray-900 rounded-lg hover:bg-red-400">

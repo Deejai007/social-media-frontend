@@ -31,7 +31,6 @@ const Settings: React.FC = () => {
   return (
     <div className="max-w-screen h-[calc(100vh-65px)]  ">
       <div className="container mx-auto p-4">
-        {/* Tabs */}
         <div className="border-b border-gray-200 flex flex-row justify-between">
           <nav className="flex space-x-4">
             <button
@@ -65,22 +64,19 @@ const Settings: React.FC = () => {
             </span>
           </button>
         </div>
-
-        {/* Tab Content */}
         <div className="mt-6">
           {activeTab === "general" && (
             <div>
               <h2 className="text-xl font-semibold">General Settings</h2>
-              {/* Add general settings content here */}
-              <p className="mt-4">This is the general settings content.</p>
+              <p className="mt-4">general settings content.</p>
             </div>
           )}
 
           {activeTab === "profile" && (
             <div>
               <h2 className="text-xl font-semibold">Profile Settings</h2>
-              {/* Add profile settings content here */}
-              <p className="mt-4">This is the profile settings content.</p>
+
+              <p className="mt-4"> profile settings content.</p>
             </div>
           )}
         </div>
