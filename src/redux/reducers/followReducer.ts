@@ -13,6 +13,7 @@ const initialState: UserState = {
   loading: false,
   error: null,
   successMessage: null,
+  followList: [],
 };
 
 const followSlice = createSlice({

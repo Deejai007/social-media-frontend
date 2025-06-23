@@ -26,6 +26,7 @@ export interface UserState {
   isFollowing: string | null;
   loading: boolean;
   error: string | null;
+  followList: any[];
   successMessage: string | null;
 }
 

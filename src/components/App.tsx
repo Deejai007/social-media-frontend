@@ -20,6 +20,7 @@ import Create from "pages/Create/Create";
 import PostPage from "pages/PostPage";
 import Notifications from "./../pages/Notifications";
 import Settings from "./../pages/Settings";
+import FollowListPage from "../pages/FollowListPage";
 
 import { useEffect } from "react";
 import ProtectedRoute from "./ProtectedRoute";
@@ -120,6 +121,22 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/follow-list/:userId/:mode"
+            element={
+              <ProtectedRoute>
+                <FollowListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
           {/* <Route path="/" element={<Home />} /> */}
         </Route>
         <Route path="/login" element={<Login />} />
@@ -129,6 +146,7 @@ const App: React.FC = () => {
         <Route path="/password-reset/:token" element={<PasswordReset />} />
         <Route path="/create-profile" element={<CreateProfile />} />
         <Route path="*" element={<Login />} />
+        {/* <Route path="*" element={<Login />} /> */}
       </Routes>
     </div>
   );

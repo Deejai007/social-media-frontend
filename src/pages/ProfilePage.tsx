@@ -1,4 +1,8 @@
-import { sendFollowRequest, unfollowUser } from "redux/actions/FollowActions";
+import {
+  sendFollowRequest,
+  unfollowUser,
+  getFollowList,
+} from "redux/actions/FollowActions";
 import { getUserProfile } from "../redux/actions/userActions";
 import { AppDispatch, RootState } from "../redux/store/store";
 import { getUserPosts } from "redux/actions/PostActions";
@@ -25,6 +29,7 @@ interface ProfileData {
 interface Posts {
   posts: any[];
 }
+
 const ProfilePage = () => {
   const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
@@ -51,11 +56,13 @@ const ProfilePage = () => {
   });
 
   const openFollowerDialog = async () => {
-    if (profileData.followerCount) setIsFollowerListOpen(true);
+    if (profileData.followerCount && profileData.id) {
+      navigate(`/follow-list/${profileData.id}/followers`);
+    }
   };
   const openFollowingDialog = async () => {
-    if (profileData.followingCount) {
-      setIsFollowingListOpen(true);
+    if (profileData.followingCount && profileData.id) {
+      navigate(`/follow-list/${profileData.id}/followings`);
     }
   };
 
@@ -108,6 +115,11 @@ const ProfilePage = () => {
       if (profileData.id) {
         const result = await dispatch(sendFollowRequest(profileData.id));
         if (result.payload.success) {
+          // Update follow state and follower count
+          setProfileData((prev) => ({
+            ...prev,
+            isFollowing: "pending",
+          }));
           console.log(result.payload.data);
         } else {
           console.log(result.payload.message);
@@ -124,8 +136,12 @@ const ProfilePage = () => {
           unfollowUser({ followingId: profileData.id, mode: mode }),
         );
         if (result.payload.success) {
-          // console.log(result.payload.data);
-          // console.log(posts);
+          // Update follow state and follower count
+          setProfileData((prev) => ({
+            ...prev,
+            isFollowing: undefined,
+            followerCount: (prev.followerCount || 1) - 1,
+          }));
         } else {
           console.log(result.payload.message);
         }
@@ -155,7 +171,7 @@ const ProfilePage = () => {
     if (profileData.id) {
       getPosts(profileData.id);
     }
-  }, [profileData, offset]);
+  }, [profileData.id, offset]);
 
   if (User.loading) {
     return (
@@ -222,9 +238,7 @@ const ProfilePage = () => {
               ) : profileData.isFollowing == null ? (
                 <button
                   onClick={handleFollow}
-                  className="bg-primary px-2 py-1 
-              text-white font-semibold text-sm rounded block text-center 
-              sm:inline-block block"
+                  className="bg-primary px-2 py-1 text-white font-semibold text-sm rounded text-center sm:inline-block"
                 >
                   Follow
                 </button>

@@ -8,6 +8,7 @@ const initialState: UserState = {
   loading: false,
   error: null,
   successMessage: null,
+  followList: [],
 };
 
 // send follow request
@@ -50,7 +51,7 @@ export const acceptFollowRequest = createAsyncThunk(
       const response = await axiosApi.post("/follow/acceptreq", {
         followerId: followerId,
       });
-      console.log(response.data);
+      console.log(response);
       return response.data;
     } catch (error: any) {
       console.log(error.response.data);
@@ -98,3 +99,108 @@ export const unfollowUser = createAsyncThunk(
     }
   },
 );
+// get followers or followings list
+export const getFollowList = createAsyncThunk(
+  "follow/getFollowList",
+  async (
+    params: { userId: string; mode: "followers" | "followings" },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await axiosApi.get(
+        `/follow/list/${params.userId}?mode=${params.mode}`,
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+
+const followSlice = createSlice({
+  name: "follow",
+  initialState: {
+    ...initialState,
+    followList: [],
+    followListLoading: false,
+    followListError: null,
+  },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(sendFollowRequest.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(sendFollowRequest.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(sendFollowRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string | null;
+      })
+      .addCase(getPendingRequests.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getPendingRequests.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.data;
+      })
+      .addCase(getPendingRequests.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string | null;
+      })
+      .addCase(acceptFollowRequest.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(acceptFollowRequest.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(acceptFollowRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string | null;
+      })
+      .addCase(RejectFollowRequest.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(RejectFollowRequest.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(RejectFollowRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string | null;
+      })
+      .addCase(unfollowUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(unfollowUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = action.payload.message;
+      })
+      .addCase(unfollowUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string | "Failed to unfollow user";
+      })
+      .addCase(getFollowList.pending, (state) => {
+        state.followListLoading = true;
+        state.followListError = null;
+      })
+      .addCase(getFollowList.fulfilled, (state, action) => {
+        state.followListLoading = false;
+        state.followList = action.payload.data || [];
+      })
+      .addCase(getFollowList.rejected, (state, action) => {
+        state.followListLoading = false;
+        state.error = action.payload as string | "Failed to fetch follow list";
+      });
+  },
+});
+
+export default followSlice.reducer;

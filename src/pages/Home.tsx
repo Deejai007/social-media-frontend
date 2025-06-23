@@ -9,12 +9,13 @@ import { toast } from "react-toastify";
 import { AppDispatch, RootState } from "redux/store/store";
 import Nav from "../components/SideNav";
 
-const ComponentName: React.FC = () => {
+const Home: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
   const loading = useSelector((state: RootState) => state.user.loading);
   const navigate = useNavigate();
-
+  console.log("User:", user);
+  console.log("hi");
   useEffect(() => {
     console.log("Hi");
     console.log(user);
@@ -48,4 +49,4 @@ const ComponentName: React.FC = () => {
   );
 };
 
-export default ComponentName;
+export default Home;
