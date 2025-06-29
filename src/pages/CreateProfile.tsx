@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import TextareaAutosize from "react-textarea-autosize";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ThreeDots } from "react-loader-spinner";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AppDispatch, RootState } from "redux/store/store";
 import Nav from "../components/SideNav";
@@ -13,44 +12,45 @@ import { addUserData } from "redux/actions/userActions";
 const CreateProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
-  const loading = useSelector((state: RootState) => state.user.loading);
-
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+  const usernameRef = useRef<HTMLInputElement>(null);
+
+  const [usernameError, setUsernameError] = useState("");
+
   const [formData, setFormData] = useState({
-    firstName: "D ",
+    firstName: "",
     lastName: "S ",
     username: "FF",
     location: "FF",
     bio: "KJKSD",
   });
 
-  // const [formData, setFormData] = useState({
-  //   firstName: "",
-  //   lastName: "",
-  //   username: "",
-  //   location: "",
-  //   bio: "",
-  // });
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
 
-    if (name == "bio") if (e.target.value.length > 300) return;
+    if (name === "bio" && value.length > 300) return;
 
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
+
+    if (name === "username") {
+      setUsernameError(""); // clear error on typing
+    }
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     const result = await dispatch(addUserData(formData));
 
     if (result.payload.success) {
-      console.log(result.payload.message);
+      setUsernameError("");
       toast.success(result.payload.message, {
         position: "top-right",
         autoClose: 5000,
@@ -63,7 +63,11 @@ const CreateProfile: React.FC = () => {
       });
       navigate("/home");
     } else {
-      console.log(result.payload.message);
+      if (result.payload.target === "username") {
+        setUsernameError("Username is already taken");
+        usernameRef.current?.focus();
+      }
+
       toast.info(result.payload.message, {
         position: "top-right",
         autoClose: 5000,
@@ -75,15 +79,21 @@ const CreateProfile: React.FC = () => {
         theme: "light",
       });
     }
+
+    setLoading(false);
   };
 
   useEffect(() => {
+    if (!user.user) {
+      navigate("/login", { replace: true });
+      return;
+    }
     console.log(user);
-  }, [user]);
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen p-6 bg-gray-100 flex items-center justify-center">
-      <div className="container max-w-screen-lg mx-auto ">
+      <div className="container max-w-screen-lg mx-auto">
         <div className="flex items-center p-4 justify-center -ml-8">
           <img src="public/assets/logo.png" alt="logo" className="h-8 pr-2" />
           <span className="font-sevillana text-4xl font-semibold">treiwo</span>
@@ -96,6 +106,7 @@ const CreateProfile: React.FC = () => {
                   <p className="font-medium text-2xl">Create profile</p>
                   <p>Complete your profile by adding details about you.</p>
                 </div>
+
                 <div className="md:col-span-2">
                   <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
                     <div className="md:col-span-2">
@@ -129,20 +140,19 @@ const CreateProfile: React.FC = () => {
                         name="username"
                         id="username"
                         required
-                        className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                        ref={usernameRef}
+                        className={`h-10 border mt-1 rounded px-4 w-full bg-gray-50 ${
+                          usernameError ? "border-red-500" : ""
+                        }`}
                         value={formData.username}
                         onChange={handleChange}
                       />
+                      {usernameError && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {usernameError}
+                        </p>
+                      )}
                     </div>
-                    {/* <div className="md:col-span-1 flex items-end">
-                      <button
-                        type="button"
-                        className="bg-blue-100 h-1 p-4 m-2 rounded-sm border-2 border-blue-200 flex items-center justify-center"
-                        // onClick={() => setIsUserNameValid(true)}
-                      >
-                        Check
-                      </button>
-                    </div> */}
 
                     <div className="md:col-span-3">
                       <label htmlFor="location">Location</label>
@@ -184,8 +194,6 @@ const CreateProfile: React.FC = () => {
                               color="white"
                               radius="8"
                               ariaLabel="three-dots-loading"
-                              wrapperStyle={{}}
-                              wrapperClass=""
                             />
                           ) : (
                             <span>Submit</span>

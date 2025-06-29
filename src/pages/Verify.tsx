@@ -10,21 +10,37 @@ import { connect } from "react-redux";
 interface Props {}
 
 const Verify: React.FC<Props> = () => {
-  const userState = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.user);
+  useEffect(() => {
+    if (!user.user) {
+      navigate("/login", { replace: true });
+      return;
+    }
+    if (!user.user.email) {
+      navigate("/login", { replace: true });
+    }
+    if (user.user.verified) {
+      navigate("/", { replace: true });
+    }
+  }, [user, navigate]);
   const loading = useSelector((state: RootState) => state.user.loading);
   const dispatch: AppDispatch = useDispatch();
-  const navigate = useNavigate();
   const [otp, setOtp] = useState<string[]>(new Array(6).fill(""));
   const [showOtpForm, setShowOtpForm] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    console.log(userState);
-  }, [userState]);
+    console.log(user);
+  }, [user]);
 
   const handleSendOtp = async () => {
-    console.log(userState.user.email);
-    let email: string = userState.user.email;
+    if (!user.user || !user.user.email) {
+      toast.error("User not logged in or email missing");
+      navigate("/login", { replace: true });
+      return;
+    }
+    let email: string = user.user.email;
 
     const result = await dispatch(sendOtp(email));
     if (result.payload.success) {
@@ -90,10 +106,15 @@ const Verify: React.FC<Props> = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!user.user || !user.user.email) {
+      toast.error("User not logged in or email missing");
+      navigate("/login", { replace: true });
+      return;
+    }
     const otpValue = otp.join("");
     console.log("OTP Submitted:", otpValue);
     const result = await dispatch(
-      verify({ email: userState.user.email, otp: otpValue }),
+      verify({ email: user.user.email, otp: otpValue }),
     );
     if (result.payload.success) {
       console.log(result.payload.message);
@@ -113,6 +134,11 @@ const Verify: React.FC<Props> = () => {
     }
   };
 
+  if (!user.user || !user.user.email) {
+    // Prevent rendering if user is not logged in or email is missing
+    return null;
+  }
+
   return (
     <>
       <main className="relative min-h-screen flex flex-col justify-center bg-slate-50 overflow-hidden">
@@ -123,7 +149,7 @@ const Verify: React.FC<Props> = () => {
                 <h1 className="text-2xl font-bold mb-1">Email Verification</h1>
                 <p className="text-[15px] text-slate-500">
                   Before proceeding further, you need to verify your email id{" "}
-                  <span className="font-semibold">{userState.user.email}</span>
+                  <span className="font-semibold">{user.user.email}</span>
                 </p>
               </header>
               {!showOtpForm ? (
