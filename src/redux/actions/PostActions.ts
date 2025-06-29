@@ -9,6 +9,7 @@ const initialState: UserState = {
   isFollowing: null,
   loading: false,
   error: null,
+  followList: [],
   successMessage: null,
 };
 
