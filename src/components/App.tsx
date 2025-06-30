@@ -137,6 +137,14 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/create-profile"
+            element={
+              <ProtectedRoute>
+                <CreateProfile />
+              </ProtectedRoute>
+            }
+          />
           {/* <Route path="/" element={<Home />} /> */}
         </Route>
         <Route path="/login" element={<Login />} />
@@ -144,8 +152,8 @@ const App: React.FC = () => {
         <Route path="/verify" element={<Verify />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/password-reset/:token" element={<PasswordReset />} />
-        <Route path="/create-profile" element={<CreateProfile />} />
-        <Route path="*" element={<Login />} />
+{/*         <Route path="/create-profile" element={<CreateProfile />} />
+        <Route path="*" element={<Login />} /> */}
         {/* <Route path="*" element={<Login />} /> */}
       </Routes>
     </div>
