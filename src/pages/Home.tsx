@@ -29,22 +29,6 @@ const Home: React.FC = () => {
       nihil?
       <br />
       <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Est nostrum
-      laborum similique odio fugiat quibusdam consequuntur. Placeat dolores non
-      nam. Culpa, repellendus commodi quod tenetur porro pariatur quam atque, in
-      laboriosam sapiente neque ullam odit. Similique delectus ex autem
-      molestiae sed tempore? Deserunt accusamus earum iste quo voluptate illo
-      soluta doloribus doloremque consequuntur error eius repellat aut at
-      quibusdam, deleniti unde minima nesciunt esse. Deserunt, veniam assumenda
-      ea praesentium, molestiae eligendi et dolorum fugiat quam quisquam
-      aspernatur nostrum obcaecati placeat saepe eius nihil! Possimus eligendi
-      aut provident quam, fugiat pariatur quos harum vel animi expedita
-      excepturi esse dolor omnis et?
     </div>
   );
 };

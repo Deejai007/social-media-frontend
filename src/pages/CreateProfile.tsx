@@ -47,8 +47,9 @@ const CreateProfile: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    console.log("Submit");
     const result = await dispatch(addUserData(formData));
-
+    console.log(result);
     if (result.payload.success) {
       setUsernameError("");
       toast.success(result.payload.message, {
@@ -88,7 +89,11 @@ const CreateProfile: React.FC = () => {
       navigate("/login", { replace: true });
       return;
     }
-    console.log(user);
+    if (!user.user.verified) {
+      console.log("not verified");
+      navigate("/verify", { replace: true });
+      return;
+    }
   }, [user, navigate]);
 
   return (

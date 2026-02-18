@@ -94,8 +94,10 @@ export const login = createAsyncThunk(
       const response = await axiosApi.post("/user/login", userData, {
         withCredentials: true,
       });
+      console.log(response);
       return response.data;
     } catch (error: any) {
+      console.log(error);
       console.log(error.response.data);
       return rejectWithValue(error.response.data);
     }
@@ -137,8 +139,10 @@ export const addUserData = createAsyncThunk(
       console.log(formData);
 
       const response = await axiosApi.post("/user/addUserData", { formData });
+      console.log("res from api" + response);
       return response.data;
     } catch (error: any) {
+      console.error(error);
       return rejectWithValue(error.response.data);
     }
   },

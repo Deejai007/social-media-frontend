@@ -136,7 +136,13 @@ const PostPage = () => {
   }
 
   return (
-    <main className="bg-white  xl:ml-36 lg:ml-16  border bg-white 2md:max-w-xl">
+    <main
+      className={`bg-white xl:ml-36 lg:ml-16 border bg-white 2md:max-w-xl ${
+        postData.isPrivate
+          ? "border-2 border-purple-300 rounded-md shadow-[0_0_16px_2px_rgba(168,85,247,0.2)]"
+          : ""
+      }`}
+    >
       <div className="flex items-center justify-between p-2.5">
         <div className="flex items-center">
           <Link to={`/profile/${postData.username}`}>
@@ -144,17 +150,26 @@ const PostPage = () => {
               <img src={postData.profileImage ?? ""} className="rounded-full" />
             </div>
           </Link>
-          <div className="ml-2.5">
-            <Link to={`/profile/${postData.username}`}>
-              <p className="font-medium text-md">{postData.username}</p>
-            </Link>
-            <p className="text-sm flex flex-row justify-center items-center">
-              <span>
-                <CiLocationOn />
-              </span>
-              &nbsp;
-              {postData.location}
-            </p>
+          <div className="ml-2.5 flex items-center gap-2 ">
+            <div>
+              <Link to={`/profile/${postData.username}`}>
+                <div className="flex items-center gap-2">
+                  <p className="font-medium text-md">{postData.username}</p>
+                  {postData.isPrivate && (
+                    <span className="bg-purple-600 text-white text-sm font-medium px-2 py-0.5 rounded-full shadow-sm">
+                      Private
+                    </span>
+                  )}
+                </div>
+              </Link>
+              <p className="text-sm flex flex-row  items-center">
+                <span>
+                  <CiLocationOn />
+                </span>
+                &nbsp;
+                {postData.location}
+              </p>
+            </div>
           </div>
         </div>
         <IoEllipsisHorizontalSharp className="text-lg mr-2 cursor-pointer" />

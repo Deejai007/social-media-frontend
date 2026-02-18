@@ -5,6 +5,7 @@ export interface Post {
   caption: string | null;
   location: string | null;
   profileImage: string | null;
+  isPrivate: boolean | false;
   username: string | null;
   createdAt: Date | null;
   likeCount: number | 0;

@@ -86,13 +86,13 @@ const SideNav: React.FC = () => {
 
               <li>
                 <Link
-                  to="/"
+                  to="/chat"
                   className={`flex items-center p-2 text-gray-900 rounded-lg ${
                     isSelected == "messages" ? "bg-primary" : "bg-gray-300"
                   } hover:bg-primary group`}
-                  onClick={() => handleSelection("")}
+                  onClick={() => handleSelection("chat")}
                 >
-                  <span className="ms-3">Messages</span>
+                  <span className="ms-3">Chats</span>
                 </Link>
               </li>
               <li>

@@ -25,6 +25,7 @@ import FollowListPage from "../pages/FollowListPage";
 import { useEffect } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 import MyProfile from "pages/MyProfile";
+import Chat from "pages/Chat/Chat";
 
 const IncludeNav: React.FC = () => (
   <>
@@ -57,6 +58,7 @@ const App: React.FC = () => {
       ></ToastContainer>
 
       <Routes>
+        {/* Routes with navs */}
         <Route
           element={
             <ProtectedRoute>
@@ -130,6 +132,14 @@ const App: React.FC = () => {
             }
           />
           <Route
+            path="/chat"
+            element={
+              <ProtectedRoute>
+                <Chat />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/"
             element={
               <ProtectedRoute>
@@ -137,22 +147,22 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/create-profile"
-            element={
-              <ProtectedRoute>
-                <CreateProfile />
-              </ProtectedRoute>
-            }
-          />
-          {/* <Route path="/" element={<Home />} /> */}
         </Route>
+        {/* Route WITHOUT navs */}
+        <Route
+          path="/create-profile"
+          element={
+            <ProtectedRoute>
+              <CreateProfile />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/password-reset/:token" element={<PasswordReset />} />
-{/*         <Route path="/create-profile" element={<CreateProfile />} />
+        {/*         <Route path="/create-profile" element={<CreateProfile />} />
         <Route path="*" element={<Login />} /> */}
         {/* <Route path="*" element={<Login />} /> */}
       </Routes>

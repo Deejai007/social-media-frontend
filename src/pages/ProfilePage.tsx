@@ -55,8 +55,10 @@ const ProfilePage = () => {
     id: "",
   });
 
-  const openFollowerDialog = async () => {
+  const handleOpenFollower = async () => {
+    console.log("hi");
     if (profileData.followerCount && profileData.id) {
+      console.log("hi");
       navigate(`/follow-list/${profileData.id}/followers`);
     }
   };
@@ -272,10 +274,10 @@ const ProfilePage = () => {
               </li>
               <li
                 className="cursor-pointer "
-                onClick={() => openFollowerDialog()}
+                onClick={() => handleOpenFollower()}
               >
                 <span className="font-semibold text-lg">
-                  {" "}
+                  {/* desktop */}
                   {profileData.followerCount}
                 </span>
                 &nbsp; followers
@@ -307,9 +309,9 @@ const ProfilePage = () => {
               </span>
               posts
             </li>
-            <li onClick={() => openFollowerDialog()}>
+            <li onClick={() => handleOpenFollower()}>
               <span className="font-semibold text-gray-800 block text-xl">
-                {" "}
+                {/* mobile */}
                 {profileData.followerCount}
               </span>
               followerm
@@ -336,10 +338,19 @@ const ProfilePage = () => {
                 posts.posts.map((item) => (
                   <div
                     key={item.id}
-                    className=" relative grid-span-1 border-2 border-gray-300 "
+                    className={`relative grid-span-1 border-2 border-gray-300 ${
+                      item.isPrivate
+                        ? "border-purple-500 shadow-[0_0_8px_2px_rgba(168,85,247,0.15)]"
+                        : ""
+                    }`}
                   >
                     <Link to={`/post/${item.id}`}>
-                      {/* <div className="absolute w-full  hover:bg-black">hi</div> */}
+                      {/* Private badge overlay */}
+                      {item.isPrivate && (
+                        <span className="absolute top-2 right-2 z-10 bg-purple-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow">
+                          Private
+                        </span>
+                      )}
                       <img
                         src={item.media}
                         alt="i"
