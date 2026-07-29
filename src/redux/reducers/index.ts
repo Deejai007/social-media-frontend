@@ -3,12 +3,14 @@ import { combineReducers } from "@reduxjs/toolkit";
 import userReducer from "./authReducer";
 import postReducer from "./postReducer";
 import followReducer from "./followReducer";
+import chatReducer from "./chatReducer";
 
 // Root reducer
 const appReducer = combineReducers({
   user: userReducer,
   post: postReducer,
   follow: followReducer,
+  chat: chatReducer,
 });
 
 // Create a root reducer with logout handling

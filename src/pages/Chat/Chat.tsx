@@ -1,87 +1,64 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { FiPlus, FiSearch } from "react-icons/fi";
-import { useSelector } from "react-redux";
-import { RootState } from "redux/store/store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "redux/store/store";
+import { debounceSearchUsers } from "redux/actions/userActions";
+import {
+  setActiveConversation,
+  addOrUpdateConversation,
+} from "redux/reducers/chatReducer";
+import { useWebSocket } from "utils/useWebSocket";
 
 import ChatWindow from "components/chat/ChatWindow";
 
-const conversations = [
-  {
-    id: 1,
-    name: "Ava Johnson",
-    last: "See you tomorrow!",
-    time: "2:14 PM",
-    unread: 2,
-  },
-  {
-    id: 2,
-    name: "Liam Smith",
-    last: "Thanks — got it.",
-    time: "Yesterday",
-    unread: 0,
-  },
-  { id: 3, name: "Noah Lee", last: "Let's catch up.", time: "Mon", unread: 1 },
-  {
-    id: 4,
-    name: "Sophia Gomez",
-    last: "Love this! 😍",
-    time: "Sun",
-    unread: 0,
-  },
-];
-
-const messages = [
-  {
-    id: 1,
-    fromMe: false,
-    text: "Hey! How's the project going?",
-    time: "2:10 PM",
-  },
-  {
-    id: 2,
-    fromMe: true,
-    text: "Pretty good — finishing up the UI today.",
-    time: "2:11 PM",
-  },
-  {
-    id: 3,
-    fromMe: false,
-    text: "Nice, can't wait to see it.",
-    time: "2:12 PM",
-  },
-  { id: 4, fromMe: true, text: "I'll share a preview soon.", time: "2:13 PM" },
-];
-
 const Chat: React.FC = () => {
-  const socketRef = useRef<WebSocket | null>(null);
-  const user = useSelector((state: RootState) => state.user);
-  const [search, setSearch] = useState("");
-  const [idle, setIdle] = useState(true);
-  const [users, setUsers] = useState<{ id: number; name: string }[]>([]); // Dummy users, replace with real data if needed
+  const dispatch: AppDispatch = useDispatch();
 
-  function connectWS() {
-    socketRef.current = new WebSocket(
-      `http://localhost:7000/chat?userId=${user.user.id}`,
-    );
-    console.log("Connecting to WebSocket...");
-    console.log("WebSocket instance:", socketRef.current);
-    socketRef.current.onopen = () => {
-      console.log("Connected");
-    };
-  }
+  const user = useSelector((state: RootState) => state.user);
+  const { connected, conversations, messages, activeConversation } =
+    useSelector((state: RootState) => state.chat);
+
+  const { sendMessage } = useWebSocket(user.user?.id);
+
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const searchResults = useSelector((state: RootState) => state.user.followList);
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedQuery(query), 500);
+    return () => clearTimeout(timer);
+  }, [query]);
 
   useEffect(() => {
-    connectWS();
-    return () => {
-      socketRef.current?.close();
-    };
-  }, []);
+    if (debouncedQuery) {
+      dispatch(debounceSearchUsers(debouncedQuery));
+    }
+  }, [debouncedQuery, dispatch]);
+
+  const handleSelectUser = (userId: string, displayName: string) => {
+    dispatch(addOrUpdateConversation({ userId, displayName }));
+    dispatch(setActiveConversation(userId));
+    setQuery("");
+  };
+
+  const activeMessages = activeConversation ? (messages[activeConversation] ?? []) : [];
 
   return (
-    <main className=" absolute md:w-[75%] min-h-screen bg-gradient-to-br from-purple-500 via-pink-400 to-fuchsia-600 p-6 transition-colors duration-300">
+    <main className="absolute md:w-[75%] min-h-screen bg-gradient-to-br from-purple-300 via-pink-400 to-fuchsia-100 p-6 transition-colors duration-300">
+      {/* Connection status marker */}
+      <div className="absolute top-6 left-8 z-50 flex items-center gap-2">
+        <span
+          className={`inline-block w-3 h-3 rounded-full ${connected ? "bg-green-500" : "bg-gray-400"}`}
+        ></span>
+        <span className={`text-xs font-semibold ${connected ? "text-green-700" : "text-gray-500"}`}>
+          {connected ? "Online" : "Offline"}
+        </span>
+      </div>
+
       <div className="max-w-7xl mx-auto rounded-3xl shadow-2xl overflow-hidden h-[85vh] flex backdrop-blur-md bg-white/10 border border-white/20">
         {/* Left: Conversations */}
-        <aside className="w-80 border-r border-white/20 bg-gradient-to-b from-purple-600/80 to-pink-400/80 flex flex-col text-white">
+        <aside className="w-80 border-r border-white/20 bg-gradient-to-b from-pink-600/20 to-blue-400/40 flex flex-col text-white">
           <div className="p-4 flex items-center gap-3">
             <h2 className="text-xl font-semibold">Messages</h2>
             <button className="ml-auto bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
@@ -92,114 +69,76 @@ const Chat: React.FC = () => {
           <div className="px-4 pb-4">
             <div className="relative">
               <input
-                className="w-full pl-10 pr-3 py-2 rounded-md bg-white border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 text-black"
-                placeholder="Search people or messages"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-10 pr-3 py-2 rounded-md border text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 text-black"
+                placeholder="Search people to start a chat..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
               />
               <span className="absolute left-3 top-2 text-gray-400">
                 <FiSearch />
               </span>
             </div>
-            {search && (
-              <ul className="mt-2 bg-white border border-gray-200 rounded-md shadow divide-y divide-gray-100">
-                {users.filter((u) =>
-                  u.name.toLowerCase().includes(search.toLowerCase()),
-                ).length === 0 ? (
-                  <li className="p-3 text-gray-500 text-sm">No users found</li>
+
+            {query.length > 0 && (
+              <ul className="ml-4 mt-2 rounded-md divide-y divide-gray-100">
+                {searchResults.length === 0 ? (
+                  <li className="p-3 text-sm">No users found</li>
                 ) : (
-                  users
-                    .filter((u) =>
-                      u.name.toLowerCase().includes(search.toLowerCase()),
-                    )
-                    .map((u) => (
-                      <li
-                        key={u.id}
-                        className="p-3 hover:bg-blue-50 cursor-pointer"
-                        onClick={() => setIdle(false)}
-                      >
-                        {u.name}
-                      </li>
-                    ))
+                  searchResults.map((u: any) => (
+                    <li
+                      key={u.id}
+                      className="p-3 hover:bg-blue-500 cursor-pointer"
+                      onClick={() => handleSelectUser(String(u.id), u.username ?? u.firstName ?? String(u.id))}
+                    >
+                      {u.username ?? u.firstName}
+                    </li>
+                  ))
                 )}
               </ul>
             )}
-          </div>
 
-          <nav className="px-2 overflow-y-auto hide-scrollbar">
-            <ul className="space-y-2">
-              {conversations.map((c) => (
-                <li
-                  key={c.id}
-                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-white hover:shadow-sm cursor-pointer transition-colors"
-                >
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center text-white font-semibold">
-                    {c.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .slice(0, 2)
-                      .join("")}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium truncate">{c.name}</p>
-                      <p className="text-xs text-gray-400 ml-auto">{c.time}</p>
+            <nav className="px-2 overflow-y-auto hide-scrollbar mt-2">
+              <ul className="space-y-2">
+                {conversations.map((c) => (
+                  <li
+                    key={c.userId}
+                    className={`flex items-center gap-3 p-3 rounded-lg hover:bg-primary hover:shadow-sm cursor-pointer transition-colors ${
+                      activeConversation === c.userId ? "bg-white/20" : ""
+                    }`}
+                    onClick={() => dispatch(setActiveConversation(c.userId))}
+                  >
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center text-white font-semibold">
+                      {c.displayName.slice(0, 2).toUpperCase()}
                     </div>
-                    <p className="text-sm text-gray-500 truncate">{c.last}</p>
-                  </div>
-                  {c.unread > 0 && (
-                    <div className="text-sm bg-blue-500 text-white px-2 py-1 rounded-full">
-                      {c.unread}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium truncate">{c.displayName}</p>
+                        <p className="text-xs text-gray-400 ml-auto">{c.lastTime}</p>
+                      </div>
+                      <p className="text-sm text-gray-300 truncate">{c.lastMessage}</p>
                     </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </nav>
+                    {c.unread > 0 && (
+                      <div className="text-sm bg-blue-500 text-white px-2 py-1 rounded-full">
+                        {c.unread}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
         </aside>
 
         {/* Center: Chat Window */}
         <div className="flex-1 flex flex-col bg-gradient-to-br from-purple-400/80 via-pink-300/80 to-fuchsia-500/80">
-          <ChatWindow messages={messages} />
+          <ChatWindow
+            messages={activeMessages}
+            activeUserId={activeConversation}
+            onSendMessage={(content) => {
+              if (activeConversation) sendMessage(activeConversation, content);
+            }}
+          />
         </div>
-
-        {/* Right: Details */}
-        {/* <aside className="w-80 border-l border-white/20 p-6 bg-gradient-to-b from-fuchsia-600/80 to-pink-400/80 hidden md:block text-white">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-teal-400 flex items-center justify-center text-white font-semibold text-xl">
-              AJ
-            </div>
-            <div>
-              <h4 className="text-lg font-semibold">Ava Johnson</h4>
-              <p className="text-sm text-gray-500">Photographer • New York</p>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <h5 className="text-sm font-semibold text-gray-600">About</h5>
-            <p className="text-sm text-gray-500 mt-2">
-              Loves photography, coffee, and design. Available for
-              collaborations.
-            </p>
-          </div>
-
-          <div className="mt-6">
-            <h5 className="text-sm font-semibold text-gray-600">
-              Shared Media
-            </h5>
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              <div className="w-full h-20 bg-gray-100 rounded-md" />
-              <div className="w-full h-20 bg-gray-100 rounded-md" />
-              <div className="w-full h-20 bg-gray-100 rounded-md" />
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <button className="w-full bg-red-50 text-red-600 border border-red-100 py-2 rounded-md">
-              Block
-            </button>
-          </div>
-        </aside> */}
       </div>
     </main>
   );

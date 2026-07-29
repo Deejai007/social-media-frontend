@@ -3,6 +3,7 @@ import axios from "axios";
 import axiosApi from "utils/axiosconfig";
 import { UserState } from "redux/types/user";
 import { log } from "console";
+import { connect } from "react-redux";
 
 const initialState: UserState = {
   user: null,
@@ -11,6 +12,7 @@ const initialState: UserState = {
   error: null,
   followList: [],
   successMessage: null,
+  websocket: null,
 };
 
 // Async actions
@@ -95,6 +97,11 @@ export const login = createAsyncThunk(
         withCredentials: true,
       });
       console.log(response);
+      // store token returned by backend (if present)
+      try {
+        const token = response.data?.data?.token;
+        if (token) localStorage.setItem("token", token);
+      } catch (e) {}
       return response.data;
     } catch (error: any) {
       console.log(error);
@@ -147,6 +154,33 @@ export const addUserData = createAsyncThunk(
     }
   },
 );
+export const debounceSearchUsers = createAsyncThunk(
+  "user/debounceSearchUsers",
+  async (query: string, { rejectWithValue }) => {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const config = token
+        ? { headers: { Authorization: `Bearer ${token}` } }
+        : undefined;
+      const response = await axiosApi.get(`/user/search?query=${query}`, config);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
+export const connectWebSocket = createAsyncThunk(
+  "user/connectWebSocket",
+  async (userId: number, { rejectWithValue }) => {
+    try {
+      const socket = new WebSocket(`ws://localhost:7000/chat?userId=${userId}`);
+      return socket;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 // export const Logout = createAsyncThunk(
 //   "user/logout",
 //   async (_, { rejectWithValue }) => {},

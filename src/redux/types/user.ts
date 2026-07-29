@@ -28,6 +28,7 @@ export interface UserState {
   error: string | null;
   followList: any[];
   successMessage: string | null;
+  websocket: any | null;
 }
 
 export interface RegisterSuccessAction {

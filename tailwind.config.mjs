@@ -23,6 +23,7 @@ export default {
         // primary: "#3F51B5",
         secondary: "#159EEC",
         accent: "#BFD2F8",
+        font: "#333333",
         mainbg: "rgb(240, 245, 245)",
       },
       backgroundImage: {

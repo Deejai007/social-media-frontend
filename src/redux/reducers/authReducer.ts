@@ -8,6 +8,7 @@ import {
   verify,
   addUserData,
   logout,
+  debounceSearchUsers,
 } from "redux/actions/userActions";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -19,6 +20,7 @@ const initialState: UserState = {
   error: null,
   successMessage: null,
   followList: [],
+  websocket: null,
 };
 
 const userSlice = createSlice({
@@ -163,6 +165,18 @@ const userSlice = createSlice({
       .addCase("LOGOUT", (state) => {
         Object.assign(state, initialState);
         console.log("loggedout", state);
+      })
+      .addCase(debounceSearchUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(debounceSearchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.followList = action.payload.data;
+      })
+      .addCase(debounceSearchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
