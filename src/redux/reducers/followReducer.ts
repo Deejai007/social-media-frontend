@@ -14,6 +14,7 @@ const initialState: UserState = {
   error: null,
   successMessage: null,
   followList: [],
+  websocket: null,
 };
 
 const followSlice = createSlice({

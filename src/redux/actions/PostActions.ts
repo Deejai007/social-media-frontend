@@ -11,6 +11,7 @@ const initialState: UserState = {
   error: null,
   followList: [],
   successMessage: null,
+  websocket: null,
 };
 
 // get posts

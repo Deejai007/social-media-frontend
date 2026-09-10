@@ -9,6 +9,7 @@ const initialState: UserState = {
   error: null,
   successMessage: null,
   followList: [],
+  websocket: null,
 };
 
 // send follow request

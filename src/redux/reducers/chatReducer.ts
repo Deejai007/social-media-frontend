@@ -32,7 +32,10 @@ const chatSlice = createSlice({
 
       // Update conversation entry
       const existing = state.conversations.find((c) => c.userId === partner);
-      const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      const time = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
       if (existing) {
         existing.lastMessage = msg.content;
         existing.lastTime = time;
@@ -56,14 +59,20 @@ const chatSlice = createSlice({
 
       // Update conversation entry for the sent message
       const existing = state.conversations.find((c) => c.userId === partner);
-      const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      const time = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
       if (existing) {
         existing.lastMessage = msg.content;
         existing.lastTime = time;
       }
     },
 
-    addOrUpdateConversation(state, action: PayloadAction<{ userId: string; displayName: string }>) {
+    addOrUpdateConversation(
+      state,
+      action: PayloadAction<{ userId: string; displayName: string }>,
+    ) {
       const { userId, displayName } = action.payload;
       const exists = state.conversations.some((c) => c.userId === userId);
       if (!exists) {
