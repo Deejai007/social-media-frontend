@@ -4,10 +4,24 @@ import { UserState } from "../types/user";
 import {
   acceptFollowRequest,
   getPendingRequests,
+  RejectFollowRequest,
   sendFollowRequest,
   unfollowUser,
 } from "redux/actions/FollowActions";
-const initialState: UserState = {
+
+export interface PendingFollowRequest {
+  followerId: string | number;
+  followerUsername: string | null;
+  followerProfileImage: string | null;
+}
+
+type FollowState = UserState & {
+  pendingRequests: PendingFollowRequest[];
+  pendingRequestsLoading: boolean;
+  pendingRequestsError: string | null;
+};
+
+const initialState: FollowState = {
   user: null,
   isFollowing: null,
   loading: false,
@@ -15,6 +29,9 @@ const initialState: UserState = {
   successMessage: null,
   followList: [],
   websocket: null,
+  pendingRequests: [],
+  pendingRequestsLoading: false,
+  pendingRequestsError: null,
 };
 
 const followSlice = createSlice({
@@ -52,14 +69,21 @@ const followSlice = createSlice({
       .addCase(getPendingRequests.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.pendingRequestsLoading = true;
+        state.pendingRequestsError = null;
       })
       .addCase(getPendingRequests.fulfilled, (state, action) => {
         state.loading = false;
-        // console.log(action.payload);
+        state.pendingRequestsLoading = false;
+        state.pendingRequests = action.payload.data || [];
       })
       .addCase(getPendingRequests.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload as string;
+        state.pendingRequestsLoading = false;
+        state.pendingRequestsError =
+          typeof action.payload === "string"
+            ? action.payload
+            : action.error.message || "Unable to load follow requests.";
         console.log(action.error);
       })
       //accept req
@@ -70,11 +94,28 @@ const followSlice = createSlice({
       .addCase(acceptFollowRequest.fulfilled, (state, action) => {
         state.loading = false;
         console.log(action.payload);
+        if (action.payload.success) {
+          state.pendingRequests = (state.pendingRequests ?? []).filter(
+            (request) => String(request.followerId) !== action.meta.arg,
+          );
+        }
       })
       .addCase(acceptFollowRequest.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
         console.log(action.error);
+      })
+      .addCase(RejectFollowRequest.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload.success) {
+          state.pendingRequests = (state.pendingRequests ?? []).filter(
+            (request) => String(request.followerId) !== action.meta.arg,
+          );
+        }
+      })
+      .addCase(RejectFollowRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       })
       //unfollow userfoll
       .addCase(unfollowUser.pending, (state) => {

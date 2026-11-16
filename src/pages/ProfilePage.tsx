@@ -1,11 +1,8 @@
-import {
-  sendFollowRequest,
-  unfollowUser,
-  getFollowList,
-} from "redux/actions/FollowActions";
+import { sendFollowRequest, unfollowUser } from "redux/actions/FollowActions";
 import { getUserProfile } from "../redux/actions/userActions";
 import { AppDispatch, RootState } from "../redux/store/store";
 import { getUserPosts } from "redux/actions/PostActions";
+import { Post } from "redux/types/post";
 import { useNavigate } from "react-router-dom";
 import FollowPopOver from "../components/FollowPopOver";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,15 +18,12 @@ interface ProfileData {
   postCount?: number;
   followerCount?: number;
   isFollowing?: string;
+  isFollowedByUser?: boolean;
   followingCount?: number;
   bio?: string;
   profileImage?: string;
   id?: string;
 }
-interface Posts {
-  posts: any[];
-}
-
 const ProfilePage = () => {
   const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
@@ -40,16 +34,15 @@ const ProfilePage = () => {
   const { username } = useParams<{ username: string }>();
   const [offset, setOffset] = useState(0);
   const [isFollowerListOpen, setIsFollowerListOpen] = useState(false);
-  const [isFollowingListOpen, setIsFollowingListOpen] = useState(false);
-  const [followState, setFollowState] = useState(null);
   const [postsFinish, setPostsFinish] = useState(true); //to check if all posts are fetched then hide the load more button
-  const [posts, setPosts] = useState<Posts>({ posts: [] });
+  const [posts, setPosts] = useState<{ posts: Post[] }>({ posts: [] });
   const [profileData, setProfileData] = useState<ProfileData>({
     username: "",
     postCount: 0,
     followerCount: 0,
     followingCount: 0,
     isFollowing: undefined,
+    isFollowedByUser: false,
     bio: "",
     profileImage: "",
     id: "",
@@ -62,56 +55,6 @@ const ProfilePage = () => {
       navigate(`/follow-list/${profileData.id}/followers`);
     }
   };
-  const openFollowingDialog = async () => {
-    if (profileData.followingCount && profileData.id) {
-      navigate(`/follow-list/${profileData.id}/followings`);
-    }
-  };
-
-  const getProfileData = async () => {
-    try {
-      if (username) {
-        const result = await dispatch(getUserProfile(username));
-
-        if (result.payload.success) {
-          console.log(result.payload.data);
-          setProfileData(result.payload.data.user);
-        } else {
-          console.log(result.payload.message);
-          // navigate("/login");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getPosts = async (id: string) => {
-    try {
-      if (profileData) {
-        const result = await dispatch(
-          getUserPosts({
-            userId: id,
-            limit: 9,
-            offset: offset,
-          }),
-        );
-        if (result.payload.success) {
-          console.log("Posts fetched: ", result.payload.data);
-          if (result.payload.data.length < 9) setPostsFinish(false);
-          setPosts((prevState) => ({
-            posts: [...prevState.posts, ...result.payload.data],
-          }));
-          // console.log(posts);
-        } else {
-          console.log(result.payload.message);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleFollow = async () => {
     try {
       if (profileData.id) {
@@ -154,26 +97,88 @@ const ProfilePage = () => {
   };
 
   const handleLoadMore = () => {
-    let temp = offset + 9;
-    setOffset(temp);
+    setOffset((currentOffset) => currentOffset + 9);
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      await getProfileData();
+    let cancelled = false;
+    setPosts({ posts: [] });
+    setOffset(0);
+    setPostsFinish(true);
+    setProfileData({
+      username: "",
+      postCount: 0,
+      followerCount: 0,
+      followingCount: 0,
+      isFollowing: undefined,
+      isFollowedByUser: false,
+      bio: "",
+      profileImage: "",
+      id: "",
+    });
+
+    const fetchProfile = async () => {
+      if (!username) return;
+      try {
+        const result = await dispatch(getUserProfile(username));
+        if (cancelled) return;
+
+        if (getUserProfile.fulfilled.match(result) && result.payload.success) {
+          setProfileData(result.payload.data.user);
+        } else if (getUserProfile.rejected.match(result)) {
+          console.log(result.payload);
+        } else {
+          console.log(result.payload.message);
+        }
+      } catch (error) {
+        if (!cancelled) console.log(error);
+      }
     };
-    fetchData();
-  }, [username]);
-  // useEffect(() => {
-  //   // console.log("After==", followState.isFollowing);
-  // }, [followState]);
+    fetchProfile();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [dispatch, username]);
 
   useEffect(() => {
-    // console.log(User);
-    if (profileData.id) {
-      getPosts(profileData.id);
-    }
-  }, [profileData.id, offset]);
+    if (!profileData.id) return;
+
+    let cancelled = false;
+    const profileId = profileData.id;
+    const fetchPosts = async () => {
+      try {
+        const result = await dispatch(
+          getUserPosts({
+            userId: profileId,
+            limit: 9,
+            offset,
+          }),
+        );
+        if (cancelled) return;
+
+        if (getUserPosts.fulfilled.match(result) && result.payload.success) {
+          const fetchedPosts = result.payload.data;
+          setPostsFinish(fetchedPosts.length >= 9);
+          setPosts((current) => ({
+            posts:
+              offset === 0 ? fetchedPosts : [...current.posts, ...fetchedPosts],
+          }));
+        } else if (getUserPosts.rejected.match(result)) {
+          console.log(result.payload);
+        } else {
+          console.log(result.payload.message);
+        }
+      } catch (error) {
+        if (!cancelled) console.log(error);
+      }
+    };
+    fetchPosts();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [dispatch, offset, profileData.id]);
 
   if (User.loading) {
     return (
@@ -242,7 +247,7 @@ const ProfilePage = () => {
                   onClick={handleFollow}
                   className="bg-primary px-2 py-1 text-white font-semibold text-sm rounded text-center sm:inline-block"
                 >
-                  Follow
+                  {profileData.isFollowedByUser ? "Follow back" : "Follow"}
                 </button>
               ) : profileData.isFollowing == "pending" ? (
                 <button
@@ -298,7 +303,7 @@ const ProfilePage = () => {
         {/* user following for mobile only */}
         <pre className="md:hidden text-md my-4 px-8">{profileData.bio}</pre>
 
-        <div className="px-px md:px-3 px-8">
+        <div className="px-8 md:px-3">
           <ul
             className=" flex justify-center md:hidden space-x-12 
           text-center p-2 text-gray-600 leading-snug text-sm"
@@ -352,7 +357,7 @@ const ProfilePage = () => {
                         </span>
                       )}
                       <img
-                        src={item.media}
+                        src={item.media ?? undefined}
                         alt="i"
                         className="w-full aspect-square object-cover"
                       />

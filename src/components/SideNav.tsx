@@ -8,6 +8,9 @@ import { Link } from "react-router-dom";
 
 const SideNav: React.FC = () => {
   const user = useSelector((state: RootState) => state.user);
+  const pendingRequestCount = useSelector(
+    (state: RootState) => state.follow.pendingRequests?.length ?? 0,
+  );
 
   const [isOpen, setIsOpen] = useState(false);
   // const [createOpen, setCreateOpen] = useState(false);
@@ -99,11 +102,23 @@ const SideNav: React.FC = () => {
                 <Link
                   to="/notifications"
                   className={`flex items-center p-2 text-gray-900 rounded-lg ${
-                    isSelected === "noti" ? "bg-primary" : "bg-gray-300"
+                    isSelected === "notifications"
+                      ? "bg-primary"
+                      : "bg-gray-300"
                   } hover:bg-primary group`}
                   onClick={() => handleSelection("notifications")}
                 >
-                  <span className="ms-3">Notifications</span>
+                  <span className="ms-3 flex flex-1 items-center justify-between">
+                    Notifications
+                    {pendingRequestCount > 0 && (
+                      <span
+                        className="ml-3 inline-flex min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 py-0.5 text-xs font-bold text-white"
+                        aria-label={`${pendingRequestCount} pending follow requests`}
+                      >
+                        {pendingRequestCount > 99 ? "99+" : pendingRequestCount}
+                      </span>
+                    )}
+                  </span>
                 </Link>
               </li>
               <li>

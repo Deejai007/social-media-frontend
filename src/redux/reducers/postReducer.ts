@@ -1,18 +1,23 @@
 import {
   fetchPosts,
+  fetchFeed,
   createPost,
   getSinglePost,
   getUserPosts,
   likePost,
   unlikePost,
 } from "../actions/PostActions";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 import { PostState, Post } from "../types/post";
 const initialState: PostState = {
   posts: [],
   loading: false,
   error: null,
+  feedPosts: [],
+  feedLoading: false,
+  feedError: null,
+  feedHasMore: true,
 };
 
 const postSlice = createSlice({
@@ -21,6 +26,22 @@ const postSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
+    },
+    updateFeedPostLike: (
+      state,
+      action: PayloadAction<{
+        postId: number;
+        isLiked: boolean;
+        likeCount: number;
+      }>,
+    ) => {
+      const post = state.feedPosts.find(
+        (item) => item.id === action.payload.postId,
+      );
+      if (post) {
+        post.isLikedByUser = action.payload.isLiked;
+        post.likeCount = action.payload.likeCount;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -39,6 +60,30 @@ const postSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
         console.log(action.payload);
+      })
+      .addCase(fetchFeed.pending, (state) => {
+        state.feedLoading = true;
+        state.feedError = null;
+      })
+      .addCase(fetchFeed.fulfilled, (state, action) => {
+        state.feedLoading = false;
+        const incomingPosts = action.payload.data as Post[];
+        if (action.payload.offset === 0) {
+          state.feedPosts = incomingPosts;
+        } else {
+          const existingIds = new Set(state.feedPosts.map((post) => post.id));
+          state.feedPosts.push(
+            ...incomingPosts.filter((post) => !existingIds.has(post.id)),
+          );
+        }
+        state.feedHasMore = action.payload.hasMore;
+      })
+      .addCase(fetchFeed.rejected, (state, action) => {
+        state.feedLoading = false;
+        state.feedError =
+          (action.payload as string) ||
+          action.error.message ||
+          "Unable to load your feed.";
       })
       //   create post
       .addCase(createPost.pending, (state) => {
@@ -105,5 +150,5 @@ const postSlice = createSlice({
   },
 });
 
-export const { clearError } = postSlice.actions;
+export const { clearError, updateFeedPostLike } = postSlice.actions;
 export default postSlice.reducer;

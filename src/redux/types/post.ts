@@ -9,10 +9,15 @@ export interface Post {
   username: string | null;
   createdAt: Date | null;
   likeCount: number | 0;
-  isLikedByCurrentUser: boolean;
+  isLikedByCurrentUser?: boolean;
+  isLikedByUser?: boolean;
 }
 export interface PostState {
   posts: Array<Post>;
   loading: boolean | false;
   error: string | null;
+  feedPosts: Array<Post>;
+  feedLoading: boolean;
+  feedError: string | null;
+  feedHasMore: boolean;
 }

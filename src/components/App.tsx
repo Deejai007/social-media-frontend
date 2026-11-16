@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Outlet,
-} from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import Login from "../pages/Login/Login";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -26,16 +21,37 @@ import { useEffect } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 import MyProfile from "pages/MyProfile";
 import Chat from "pages/Chat/Chat";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "redux/store/store";
+import { getPendingRequests } from "redux/actions/FollowActions";
 
-const IncludeNav: React.FC = () => (
-  <>
-    <TopNav />
-    <SideNav />
-    <div className="app-content md:ml-72 pt-16">
-      <Outlet />
-    </div>
-  </>
-);
+const IncludeNav: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const userId = useSelector((state: RootState) => state.user.user?.id);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    dispatch(getPendingRequests());
+    const refreshRequests = () => {
+      if (!document.hidden) dispatch(getPendingRequests());
+    };
+
+    document.addEventListener("visibilitychange", refreshRequests);
+    return () =>
+      document.removeEventListener("visibilitychange", refreshRequests);
+  }, [dispatch, userId]);
+
+  return (
+    <>
+      <TopNav />
+      <SideNav />
+      <div className="app-content md:ml-72 pt-16">
+        <Outlet />
+      </div>
+    </>
+  );
+};
 
 const App: React.FC = () => {
   // useEffect(() => {

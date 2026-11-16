@@ -1,23 +1,7 @@
-import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
-import { AppDispatch, RootState } from "redux/store/store";
-import { createPost } from "../redux/actions/PostActions";
-import { useDispatch, useSelector } from "react-redux";
-import TextareaAutosize from "react-textarea-autosize";
 import FollowRequests from "components/FollowRequests";
-import { ThreeDots } from "react-loader-spinner";
-import { useNavigate } from "react-router-dom";
-import { BsEmojiSmile } from "react-icons/bs";
-import { SiTicktick } from "react-icons/si";
-import { FiUpload } from "react-icons/fi";
-import { RxCross2 } from "react-icons/rx";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 
 const Notifications: React.FC = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const navigate = useNavigate();
-  const userId = useSelector((state: RootState) => state.user.user.id);
-
   const [activeTab, setActiveTab] = useState("requests");
 
   return (
@@ -48,7 +32,7 @@ const Notifications: React.FC = () => {
         {activeTab === "general" && <div>g</div>}
         {activeTab === "requests" && (
           <div>
-            <FollowRequests userId={userId} />
+            <FollowRequests />
           </div>
         )}
       </div>

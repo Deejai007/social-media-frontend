@@ -1,67 +1,44 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
 import { AppDispatch, RootState } from "../redux/store/store";
 import {
   acceptFollowRequest,
-  getPendingRequests,
+  RejectFollowRequest,
 } from "redux/actions/FollowActions";
+import { toast } from "react-toastify";
 
-interface Props {
-  userId: string | "";
-}
-interface Requests {
-  followerId: string | null;
-  followerProfileImage: string | null;
-  followerUsername: string | null;
-}
-
-const FollowRequests: React.FC<Props> = ({ userId }) => {
+const FollowRequests: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const User = useSelector((state: RootState) => state.user);
-  const followLoading = useSelector((state: RootState) => state.follow.loading);
-  const [requests, setRequests] = useState<Requests[]>([]);
+  const requests = useSelector(
+    (state: RootState) => state.follow.pendingRequests ?? [],
+  );
+  const followLoading = useSelector(
+    (state: RootState) => state.follow.pendingRequestsLoading,
+  );
+  const followError = useSelector(
+    (state: RootState) => state.follow.pendingRequestsError,
+  );
 
-  const getData = async () => {
-    try {
-      if (userId) {
-        const result = await dispatch(getPendingRequests());
-        console.log(result);
-
-        if (result.payload.success) {
-          console.log(result.payload.data);
-          setRequests(result.payload.data);
-        } else {
-          console.log(result.payload.message);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
   const handleAccept = async (id: string) => {
-    console.log("accept");
-    try {
-      const result = await dispatch(acceptFollowRequest(id));
-      console.log(result);
-
-      if (result.payload.success) {
-        console.log(result.payload.data);
-        setRequests(result.payload.data);
-      } else {
-        console.log(result.payload.message);
-      }
-    } catch (error) {
-      console.log(error);
+    const result = await dispatch(acceptFollowRequest(id));
+    if (
+      !acceptFollowRequest.fulfilled.match(result) ||
+      !result.payload.success
+    ) {
+      toast.error("Unable to accept follow request. Please try again.");
     }
   };
-  const handleReject = () => {
-    console.log("accept");
+
+  const handleReject = async (id: string) => {
+    const result = await dispatch(RejectFollowRequest(id));
+    if (
+      !RejectFollowRequest.fulfilled.match(result) ||
+      !result.payload.success
+    ) {
+      toast.error("Unable to remove follow request. Please try again.");
+    }
   };
-  useEffect(() => {
-    getData();
-  }, []);
 
   if (followLoading) {
     return (
@@ -82,6 +59,11 @@ const FollowRequests: React.FC<Props> = ({ userId }) => {
 
   return (
     <div>
+      {followError && (
+        <p className="p-3 text-sm text-red-600" role="alert">
+          {followError}
+        </p>
+      )}
       {requests.length ? (
         requests.map((item) => {
           return (
@@ -101,13 +83,17 @@ const FollowRequests: React.FC<Props> = ({ userId }) => {
               </span>
               <span className="grow m-4">{item.followerUsername}</span>
               <button
-                onClick={() => item.followerId && handleAccept(item.followerId)}
+                onClick={() =>
+                  item.followerId && handleAccept(String(item.followerId))
+                }
                 className="px-2 py-1 rounded bg-primary text-sm m-4"
               >
                 Accept
               </button>
               <button
-                onClick={handleReject}
+                onClick={() =>
+                  item.followerId && handleReject(String(item.followerId))
+                }
                 className="px-2 py-1 rounded bg-gray-400 text-sm m-4"
               >
                 Delete

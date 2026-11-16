@@ -30,6 +30,26 @@ export const fetchPosts = createAsyncThunk(
   },
 );
 
+export const fetchFeed = createAsyncThunk(
+  "post/fetchFeed",
+  async (
+    { limit, offset }: { limit: number; offset: number },
+    { rejectWithValue },
+  ) => {
+    try {
+      const response = await axiosApi.get(
+        `/post/feed?limit=${limit}&offset=${offset}`,
+      );
+      return { ...response.data, offset };
+    } catch (error: unknown) {
+      const message = axios.isAxiosError(error)
+        ? error.response?.data?.message
+        : undefined;
+      return rejectWithValue(message || "Unable to load your feed.");
+    }
+  },
+);
+
 // create post
 export const createPost = createAsyncThunk(
   "post/createpost",
