@@ -1,4 +1,5 @@
 import FollowRequests from "components/FollowRequests";
+import GeneralNotifications from "components/GeneralNotifications";
 import React, { useState } from "react";
 
 const Notifications: React.FC = () => {
@@ -29,7 +30,7 @@ const Notifications: React.FC = () => {
         </button>
       </div>
       <div className="p-4">
-        {activeTab === "general" && <div>g</div>}
+        {activeTab === "general" && <GeneralNotifications />}
         {activeTab === "requests" && (
           <div>
             <FollowRequests />

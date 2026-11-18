@@ -12,6 +12,11 @@ const initialState: UserState = {
   websocket: null,
 };
 
+const getErrorPayload = (error: unknown) =>
+  axios.isAxiosError(error)
+    ? error.response?.data ?? error.message
+    : "Request failed.";
+
 // send follow request
 export const sendFollowRequest = createAsyncThunk(
   "follow/sendfollowreq",
@@ -20,11 +25,9 @@ export const sendFollowRequest = createAsyncThunk(
       const response = await axiosApi.post("/follow/sendreq", {
         followingId: followingId,
       });
-      console.log(response.data);
       return response.data;
-    } catch (error: any) {
-      console.log(error.response.data);
-      return rejectWithValue(error.response.data);
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorPayload(error));
     }
   },
 );
@@ -33,13 +36,10 @@ export const getPendingRequests = createAsyncThunk(
   "follow/getrequests",
   async (_, { rejectWithValue }) => {
     try {
-      // console.log("hi");
       const response = await axiosApi.get("/follow/get-pending-requests");
-      // console.log(response.data);
       return response.data;
-    } catch (error: any) {
-      console.log(error.response.data);
-      return rejectWithValue(error.response.data);
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorPayload(error));
     }
   },
 );
@@ -48,15 +48,12 @@ export const acceptFollowRequest = createAsyncThunk(
   "follow/acceptreq",
   async (followerId: string, { rejectWithValue }) => {
     try {
-      console.log("hi");
       const response = await axiosApi.post("/follow/acceptreq", {
         followerId: followerId,
       });
-      console.log(response);
       return response.data;
-    } catch (error: any) {
-      console.log(error.response.data);
-      return rejectWithValue(error.response.data);
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorPayload(error));
     }
   },
 );
@@ -65,15 +62,12 @@ export const RejectFollowRequest = createAsyncThunk(
   "follow/rejectreq",
   async (followerId: string, { rejectWithValue }) => {
     try {
-      console.log("req to reject");
       const response = await axiosApi.post("/follow/rejectreq", {
         followerId: followerId,
       });
-      console.log(response.data);
       return response.data;
-    } catch (error: any) {
-      console.log(error.response.data);
-      return rejectWithValue(error.response.data);
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorPayload(error));
     }
   },
 );
@@ -88,15 +82,12 @@ export const unfollowUser = createAsyncThunk(
     { rejectWithValue },
   ) => {
     try {
-      console.log("hi");
       const response = await axiosApi.post("/follow/unfollow-user", {
         userData,
       });
-      console.log(response.data);
       return response.data;
-    } catch (error: any) {
-      console.log(error.response.data);
-      return rejectWithValue(error.response.data);
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorPayload(error));
     }
   },
 );
@@ -112,8 +103,8 @@ export const getFollowList = createAsyncThunk(
         `/follow/list/${params.userId}?mode=${params.mode}`,
       );
       return response.data;
-    } catch (error: any) {
-      return rejectWithValue(error.response.data);
+    } catch (error: unknown) {
+      return rejectWithValue(getErrorPayload(error));
     }
   },
 );

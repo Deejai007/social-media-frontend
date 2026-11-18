@@ -4,6 +4,7 @@ export interface Post {
   media: string | null;
   caption: string | null;
   location: string | null;
+  vibeType?: string | null;
   profileImage: string | null;
   isPrivate: boolean | false;
   username: string | null;

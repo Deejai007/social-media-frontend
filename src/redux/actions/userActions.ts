@@ -21,12 +21,13 @@ export const getUserProfile = createAsyncThunk(
   async (username: string, { rejectWithValue }) => {
     try {
       const response = await axiosApi.get(`/user/getuser/${username}`);
-      console.log("User fetched data:");
-      console.log(response.data);
       return response.data;
-    } catch (error: any) {
-      console.log(error.response.data);
-      return rejectWithValue(error.response.data);
+    } catch (error: unknown) {
+      return rejectWithValue(
+        axios.isAxiosError(error)
+          ? error.response?.data ?? error.message
+          : "Unable to load user profile.",
+      );
     }
   },
 );
@@ -158,11 +159,15 @@ export const debounceSearchUsers = createAsyncThunk(
   "user/debounceSearchUsers",
   async (query: string, { rejectWithValue }) => {
     try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const token =
+        typeof window !== "undefined" ? localStorage.getItem("token") : null;
       const config = token
         ? { headers: { Authorization: `Bearer ${token}` } }
         : undefined;
-      const response = await axiosApi.get(`/user/search?query=${query}`, config);
+      const response = await axiosApi.get(
+        `/user/search?query=${query}`,
+        config,
+      );
       return response.data;
     } catch (error: any) {
       return rejectWithValue(error.response.data);

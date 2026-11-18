@@ -4,6 +4,7 @@ import userReducer from "./authReducer";
 import postReducer from "./postReducer";
 import followReducer from "./followReducer";
 import chatReducer from "./chatReducer";
+import notificationReducer from "./notificationReducer";
 
 // Root reducer
 const appReducer = combineReducers({
@@ -11,6 +12,7 @@ const appReducer = combineReducers({
   post: postReducer,
   follow: followReducer,
   chat: chatReducer,
+  notifications: notificationReducer,
 });
 
 // Create a root reducer with logout handling

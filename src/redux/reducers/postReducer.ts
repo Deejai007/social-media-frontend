@@ -10,7 +10,7 @@ import {
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 
 import { PostState, Post } from "../types/post";
-const initialState: PostState = {
+export const initialPostState: PostState = {
   posts: [],
   loading: false,
   error: null,
@@ -22,7 +22,7 @@ const initialState: PostState = {
 
 const postSlice = createSlice({
   name: "post",
-  initialState,
+  initialState: initialPostState,
   reducers: {
     clearError: (state) => {
       state.error = null;

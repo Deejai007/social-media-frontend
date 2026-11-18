@@ -5,6 +5,7 @@ import { getUserPosts } from "redux/actions/PostActions";
 import { Post } from "redux/types/post";
 import { useNavigate } from "react-router-dom";
 import FollowPopOver from "../components/FollowPopOver";
+import VibeBadge from "../components/VibeBadge";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { ThreeDots } from "react-loader-spinner";
@@ -12,6 +13,7 @@ import { useEffect, useState } from "react";
 import { FaUserEdit } from "react-icons/fa";
 import { CiCamera } from "react-icons/ci";
 import { IoMdGrid } from "react-icons/io";
+import { toast } from "react-toastify";
 
 interface ProfileData {
   username: string;
@@ -28,11 +30,13 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const dispatch: AppDispatch = useDispatch();
   const User = useSelector((state: RootState) => state.user);
-  const postLoading = useSelector((state: RootState) => state.post.loading);
-  const followLoading = useSelector((state: RootState) => state.follow.loading);
 
   const { username } = useParams<{ username: string }>();
   const [offset, setOffset] = useState(0);
+  const [retryPostLoad, setRetryPostLoad] = useState(0);
+  const [postsLoading, setPostsLoading] = useState(false);
+  const [postsError, setPostsError] = useState<string | null>(null);
+  const [followActionLoading, setFollowActionLoading] = useState(false);
   const [isFollowerListOpen, setIsFollowerListOpen] = useState(false);
   const [postsFinish, setPostsFinish] = useState(true); //to check if all posts are fetched then hide the load more button
   const [posts, setPosts] = useState<{ posts: Post[] }>({ posts: [] });
@@ -49,55 +53,65 @@ const ProfilePage = () => {
   });
 
   const handleOpenFollower = async () => {
-    console.log("hi");
     if (profileData.followerCount && profileData.id) {
-      console.log("hi");
       navigate(`/follow-list/${profileData.id}/followers`);
     }
   };
   const handleFollow = async () => {
+    if (!profileData.id || followActionLoading) return;
+    setFollowActionLoading(true);
     try {
-      if (profileData.id) {
-        const result = await dispatch(sendFollowRequest(profileData.id));
-        if (result.payload.success) {
-          // Update follow state and follower count
-          setProfileData((prev) => ({
-            ...prev,
-            isFollowing: "pending",
-          }));
-          console.log(result.payload.data);
-        } else {
-          console.log(result.payload.message);
-        }
+      const result = await dispatch(sendFollowRequest(profileData.id));
+      if (sendFollowRequest.fulfilled.match(result) && result.payload.success) {
+        setProfileData((prev) => ({ ...prev, isFollowing: "pending" }));
+      } else {
+        toast.error(
+          result.payload?.message || "Unable to follow this user. Try again.",
+        );
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Unable to follow this user. Try again.");
+    } finally {
+      setFollowActionLoading(false);
     }
   };
-  const handleUnfollow = async (mode: string) => {
+  const handleUnfollow = async (mode: "reqCancel" | "reqUnfollow") => {
+    if (!profileData.id || followActionLoading) return;
+    const wasAccepted = profileData.isFollowing === "accepted";
+    setFollowActionLoading(true);
     try {
-      if (profileData.id) {
-        const result = await dispatch(
-          unfollowUser({ followingId: profileData.id, mode: mode }),
+      const result = await dispatch(
+        unfollowUser({ followingId: profileData.id, mode }),
+      );
+      if (unfollowUser.fulfilled.match(result) && result.payload.success) {
+        setProfileData((prev) => ({
+          ...prev,
+          isFollowing: undefined,
+          followerCount: wasAccepted
+            ? Math.max(0, (prev.followerCount || 0) - 1)
+            : prev.followerCount,
+        }));
+      } else {
+        toast.error(
+          result.payload?.message ||
+            "Unable to update follow status. Try again.",
         );
-        if (result.payload.success) {
-          // Update follow state and follower count
-          setProfileData((prev) => ({
-            ...prev,
-            isFollowing: undefined,
-            followerCount: (prev.followerCount || 1) - 1,
-          }));
-        } else {
-          console.log(result.payload.message);
-        }
       }
     } catch (error) {
-      console.log(error);
+      toast.error("Unable to update follow status. Try again.");
+    } finally {
+      setFollowActionLoading(false);
     }
   };
 
   const handleLoadMore = () => {
+    if (postsLoading || !postsFinish) return;
     setOffset((currentOffset) => currentOffset + 9);
+  };
+
+  const retryLoadingPosts = () => {
+    setPostsError(null);
+    setRetryPostLoad((attempt) => attempt + 1);
   };
 
   useEffect(() => {
@@ -105,6 +119,8 @@ const ProfilePage = () => {
     setPosts({ posts: [] });
     setOffset(0);
     setPostsFinish(true);
+    setPostsLoading(false);
+    setPostsError(null);
     setProfileData({
       username: "",
       postCount: 0,
@@ -126,12 +142,12 @@ const ProfilePage = () => {
         if (getUserProfile.fulfilled.match(result) && result.payload.success) {
           setProfileData(result.payload.data.user);
         } else if (getUserProfile.rejected.match(result)) {
-          console.log(result.payload);
+          toast.error("Unable to load this profile.");
         } else {
-          console.log(result.payload.message);
+          toast.error(result.payload.message || "Unable to load this profile.");
         }
       } catch (error) {
-        if (!cancelled) console.log(error);
+        if (!cancelled) toast.error("Unable to load this profile.");
       }
     };
     fetchProfile();
@@ -146,6 +162,8 @@ const ProfilePage = () => {
 
     let cancelled = false;
     const profileId = profileData.id;
+    setPostsLoading(true);
+    setPostsError(null);
     const fetchPosts = async () => {
       try {
         const result = await dispatch(
@@ -165,12 +183,18 @@ const ProfilePage = () => {
               offset === 0 ? fetchedPosts : [...current.posts, ...fetchedPosts],
           }));
         } else if (getUserPosts.rejected.match(result)) {
-          console.log(result.payload);
+          setPostsError("Unable to load posts. Please try again.");
         } else {
-          console.log(result.payload.message);
+          setPostsError(
+            result.payload.message || "Unable to load posts. Please try again.",
+          );
         }
       } catch (error) {
-        if (!cancelled) console.log(error);
+        if (!cancelled) {
+          setPostsError("Unable to load posts. Please try again.");
+        }
+      } finally {
+        if (!cancelled) setPostsLoading(false);
       }
     };
     fetchPosts();
@@ -178,7 +202,7 @@ const ProfilePage = () => {
     return () => {
       cancelled = true;
     };
-  }, [dispatch, offset, profileData.id]);
+  }, [dispatch, offset, profileData.id, retryPostLoad]);
 
   if (User.loading) {
     return (
@@ -223,18 +247,7 @@ const ProfilePage = () => {
               <h2 className="text-3xl inline-block font-light md:mr-2 mb-2 sm:mb-0">
                 {profileData.username || "User Not found"}
               </h2>
-              {followLoading ? (
-                <ThreeDots
-                  visible={true}
-                  height="48"
-                  width="72"
-                  color="dark"
-                  radius="48"
-                  ariaLabel="three-dots-loading"
-                  wrapperStyle={{}}
-                  wrapperClass=""
-                />
-              ) : User.user.username == username ? (
+              {User.user?.username == username ? (
                 <button
                   className="bg-secondary px-2 py-1 
               text-white font-semibold text-sm rounded flex justify-center items-center text-center 
@@ -245,27 +258,36 @@ const ProfilePage = () => {
               ) : profileData.isFollowing == null ? (
                 <button
                   onClick={handleFollow}
+                  disabled={followActionLoading}
                   className="bg-primary px-2 py-1 text-white font-semibold text-sm rounded text-center sm:inline-block"
                 >
-                  {profileData.isFollowedByUser ? "Follow back" : "Follow"}
+                  {followActionLoading
+                    ? "Working..."
+                    : profileData.isFollowedByUser
+                      ? "Follow back"
+                      : "Follow"}
                 </button>
               ) : profileData.isFollowing == "pending" ? (
                 <button
                   onClick={() => handleUnfollow("reqCancel")}
+                  disabled={followActionLoading}
                   className="bg-gray-700 px-2 py-1 
             text-white font-semibold text-sm rounded block text-center 
             sm:inline-block block"
                 >
-                  Follow request pending
+                  {followActionLoading
+                    ? "Working..."
+                    : "Follow request pending"}
                 </button>
               ) : (
                 <button
                   onClick={() => handleUnfollow("reqUnfollow")}
+                  disabled={followActionLoading}
                   className="bg-primary px-2 py-1 
             text-white font-semibold text-sm rounded block text-center 
             sm:inline-block block"
                 >
-                  Unfollow
+                  {followActionLoading ? "Working..." : "Unfollow"}
                 </button>
               )}
             </div>
@@ -356,10 +378,20 @@ const ProfilePage = () => {
                           Private
                         </span>
                       )}
-                      <img
-                        src={item.media ?? undefined}
-                        alt="i"
-                        className="w-full aspect-square object-cover"
+                      {item.media ? (
+                        <img
+                          src={item.media}
+                          alt={item.caption || "Post"}
+                          className="aspect-square w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex aspect-square items-center justify-center bg-purple-50 p-3 text-center text-sm text-gray-800">
+                          {item.caption || "Text-only post"}
+                        </div>
+                      )}
+                      <VibeBadge
+                        vibeType={item.vibeType}
+                        className="absolute left-2 top-2 z-10 px-2 py-1 text-[10px]"
                       />
                       <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                         <span className="text-white text-lg font-bold">
@@ -369,6 +401,26 @@ const ProfilePage = () => {
                     </Link>
                   </div>
                 ))
+              ) : postsLoading ? (
+                <div className="col-span-3 flex h-36 items-center justify-center">
+                  <ThreeDots
+                    visible
+                    height="48"
+                    width="72"
+                    color="dark"
+                    radius="48"
+                    ariaLabel="three-dots-loading"
+                    wrapperStyle={{}}
+                    wrapperClass=""
+                  />
+                </div>
+              ) : postsError ? (
+                <div className="col-span-3 flex h-36 flex-col items-center justify-center gap-2">
+                  <span role="alert">{postsError}</span>
+                  <button className="underline" onClick={retryLoadingPosts}>
+                    Retry
+                  </button>
+                </div>
               ) : (
                 <div className="flex items-center justify-center w-full flex-col col-span-3 h-36">
                   <span className="">
@@ -377,26 +429,22 @@ const ProfilePage = () => {
                   No posts yet...
                 </div>
               )}
-              {postsFinish && (
+              {posts.posts.length > 0 && postsError && (
+                <div className="col-span-3 flex items-center justify-center gap-2">
+                  <span role="alert">{postsError}</span>
+                  <button className="underline" onClick={retryLoadingPosts}>
+                    Retry
+                  </button>
+                </div>
+              )}
+              {postsFinish && posts.posts.length >= 9 && (
                 <div className="">
                   <button
                     className=" rounded-sm p-2 underline"
                     onClick={handleLoadMore}
+                    disabled={postsLoading}
                   >
-                    {postLoading ? (
-                      <ThreeDots
-                        visible={true}
-                        height="48"
-                        width="72"
-                        color="dark"
-                        radius="48"
-                        ariaLabel="three-dots-loading"
-                        wrapperStyle={{}}
-                        wrapperClass=""
-                      />
-                    ) : (
-                      "Load more.."
-                    )}
+                    {postsLoading ? "Loading..." : "Load more.."}
                   </button>
                 </div>
               )}

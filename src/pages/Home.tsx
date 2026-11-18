@@ -8,14 +8,19 @@ import { fetchFeed, likePost, unlikePost } from "redux/actions/PostActions";
 import { updateFeedPostLike } from "redux/reducers/postReducer";
 import { AppDispatch, RootState } from "redux/store/store";
 import { Post } from "redux/types/post";
+import VibeBadge from "components/VibeBadge";
 
 const PAGE_SIZE = 10;
 
 const Home: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const { feedPosts, feedLoading, feedError, feedHasMore } = useSelector(
-    (state: RootState) => state.post,
-  );
+  const postState = useSelector((state: RootState) => state.post);
+  const feedPosts = Array.isArray(postState?.feedPosts)
+    ? postState.feedPosts
+    : [];
+  const feedLoading = postState?.feedLoading ?? false;
+  const feedError = postState?.feedError ?? null;
+  const feedHasMore = postState?.feedHasMore ?? false;
   const [likingPostId, setLikingPostId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -155,6 +160,10 @@ const Home: React.FC = () => {
                       Private
                     </span>
                   )}
+                </div>
+
+                <div className="px-4 pb-2">
+                  <VibeBadge vibeType={post.vibeType} />
                 </div>
 
                 {post.media && (

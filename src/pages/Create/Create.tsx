@@ -10,6 +10,7 @@ import { BsEmojiSmile } from "react-icons/bs";
 import { RxCross2 } from "react-icons/rx";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { ThreeDots } from "react-loader-spinner";
+import { VIBE_OPTIONS } from "../../components/VibeBadge";
 
 const CreatePostPage = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -21,7 +22,8 @@ const CreatePostPage = () => {
   const [location, setLocation] = useState<string>("");
   const [emojiDialogOpen, setEmojiDialogOpen] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isPrivate, setIsPrivate] = useState(false); // Add state for private post
+  const [vibeType, setVibeType] = useState("");
+  const isPrivate = false;
 
   const emojiPickerRef = useRef<HTMLDivElement>(null);
   const emojiButtonRef = useRef<HTMLButtonElement>(null);
@@ -64,16 +66,20 @@ const CreatePostPage = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!image) {
-      toast.error("Please upload an image.");
+    if (!vibeType) {
+      toast.error("Choose a vibe for your post.");
+      return;
+    }
+    if (!image && !caption.trim()) {
+      toast.error("Add a photo or write something to share.");
       return;
     }
 
     const formData = new FormData();
-    formData.append("image", image, image.name);
+    if (image) formData.append("image", image, image.name);
     formData.append("caption", caption);
     formData.append("location", location);
-    formData.append("isPrivate", JSON.stringify(isPrivate)); // send as string
+    formData.append("vibe", vibeType);
 
     try {
       const result = await dispatch(createPost(formData));
@@ -98,17 +104,11 @@ const CreatePostPage = () => {
         <div className="lg:w-1/2 flex flex-col">
           <div className="bg-gray-50 rounded-lg overflow-hidden my-4 py-4 md:h-[500px] flex items-center justify-center">
             {imagePreview ? (
-              <div className="relative w-full h-full ">
+              <div className="relative flex h-full w-full items-center justify-center">
                 <img
                   src={imagePreview}
                   alt="Preview"
-                  className="  w-full object-contain"
-                />
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-full h-[400px] object-contain"
-                  style={{ maxHeight: 400 }}
+                  className="max-h-[400px] w-full object-contain"
                 />
                 <button
                   type="button"
@@ -125,8 +125,11 @@ const CreatePostPage = () => {
               >
                 <FiUpload className="text-4xl text-gray-400 mb-4" />
                 <p className="text-sm text-gray-500">
-                  <span className="font-semibold text-primary ">Upload</span> or
-                  drag and drop
+                  <span className="font-semibold text-primary">
+                    Add a photo (optional)
+                  </span>
+                  <br />
+                  You can also share a text-only post
                 </p>
                 <input
                   id="upload-image"
@@ -142,6 +145,29 @@ const CreatePostPage = () => {
 
         {/* Right Side - Post Details */}
         <div className="lg:w-1/2 flex flex-col gap-6 z-1">
+          <fieldset className="space-y-2">
+            <legend className="text-gray-700 font-medium">
+              Choose your vibe <span className="text-red-600">*</span>
+            </legend>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              {VIBE_OPTIONS.map(({ emoji, label }) => (
+                <button
+                  key={label}
+                  type="button"
+                  aria-pressed={vibeType === label}
+                  onClick={() => setVibeType(label)}
+                  className={`rounded-lg border px-3 py-2 text-sm transition-colors ${
+                    vibeType === label
+                      ? "border-purple-600 bg-purple-100 text-purple-900"
+                      : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                  }`}
+                >
+                  {emoji} {label}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
           {/* Caption Section */}
           <div className="space-y-2 ">
             <label
@@ -152,7 +178,7 @@ const CreatePostPage = () => {
             </label>
             <TextareaAutosize
               id="caption-input"
-              placeholder="Write a caption..."
+              placeholder="Write a caption or share a text-only post..."
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
               className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary min-h-[120px]"
@@ -218,30 +244,6 @@ const CreatePostPage = () => {
             <label className="text-gray-700 font-medium block">
               Post Privacy
             </label>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                role="switch"
-                aria-checked={isPrivate}
-                onClick={() => setIsPrivate(!isPrivate)}
-                className={` inline-flex h-7 w-14 items-center rounded-full transition-colors duration-300 ${
-                  isPrivate ? "bg-purple-600" : "bg-gray-200"
-                } focus:outline-none  focus:ring-offset-2`}
-              >
-                <span
-                  className={`inline-block h-5 w-5  transform rounded-full bg-white transition-transform duration-300 ${
-                    isPrivate ? "translate-x-8" : "translate-x-1"
-                  } shadow-lg`}
-                />
-              </button>
-              <span
-                className={`text-sm font-medium ${
-                  isPrivate ? "text-purple-600" : "text-gray-500"
-                }`}
-              >
-                {isPrivate ? "Private" : "Public"}
-              </span>
-            </div>
             {isPrivate ? (
               <p className="text-sm text-purple-500 animate-fade-in mt-2 flex items-center gap-2">
                 <svg
@@ -285,13 +287,11 @@ const CreatePostPage = () => {
           <div className="mt-auto ">
             <button
               type="submit"
-              disabled={!image || loading}
-              className={`w-full py-3 rounded-lg font-medium transition-all duration-300  hover:scale-[1.02] ${
-                !image
+              disabled={!vibeType || (!image && !caption.trim()) || loading}
+              className={`w-full py-3 rounded-lg font-medium transition-all duration-300 hover:scale-[1.02] ${
+                !vibeType || (!image && !caption.trim())
                   ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                  : isPrivate
-                    ? "bg-purple-500 hover:bg-purple-600 text-white"
-                    : "bg-primary hover:bg-primary/90 text-white"
+                  : "bg-primary hover:bg-primary/90 text-white"
               }`}
             >
               {loading ? (

@@ -12,6 +12,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import thunk from "redux-thunk";
+import { migratePersistedState } from "./migrations";
 
 type Roottype = ReturnType<typeof appReducer>;
 
@@ -19,6 +20,8 @@ type Roottype = ReturnType<typeof appReducer>;
 const persistConfig: PersistConfig<Roottype> = {
   key: "root",
   storage,
+  version: 1,
+  migrate: migratePersistedState,
 };
 
 const persistedReducer = persistReducer(persistConfig, appReducer);

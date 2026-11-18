@@ -54,16 +54,11 @@ const followSlice = createSlice({
       })
       .addCase(sendFollowRequest.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(
-          "Follow request status update to ",
-          action.payload.data.status,
-        );
         state.isFollowing = action.payload.data.status;
       })
       .addCase(sendFollowRequest.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-        console.log(action.payload);
       })
       //get pending requests
       .addCase(getPendingRequests.pending, (state) => {
@@ -84,7 +79,6 @@ const followSlice = createSlice({
           typeof action.payload === "string"
             ? action.payload
             : action.error.message || "Unable to load follow requests.";
-        console.log(action.error);
       })
       //accept req
       .addCase(acceptFollowRequest.pending, (state) => {
@@ -93,7 +87,6 @@ const followSlice = createSlice({
       })
       .addCase(acceptFollowRequest.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload);
         if (action.payload.success) {
           state.pendingRequests = (state.pendingRequests ?? []).filter(
             (request) => String(request.followerId) !== action.meta.arg,
@@ -103,7 +96,6 @@ const followSlice = createSlice({
       .addCase(acceptFollowRequest.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-        console.log(action.error);
       })
       .addCase(RejectFollowRequest.fulfilled, (state, action) => {
         state.loading = false;
@@ -122,16 +114,13 @@ const followSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(unfollowUser.fulfilled, (state, action) => {
+      .addCase(unfollowUser.fulfilled, (state) => {
         state.loading = false;
         state.isFollowing = null;
-
-        console.log("User unfollowed: ", action.payload);
       })
       .addCase(unfollowUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
-        console.log(action.error);
       });
   },
 });

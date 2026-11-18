@@ -6,6 +6,7 @@ import { AppDispatch, RootState } from "../redux/store/store";
 import { FaUserEdit } from "react-icons/fa";
 import { Post } from "redux/types/post";
 import { CiLocationOn } from "react-icons/ci";
+import VibeBadge from "../components/VibeBadge";
 
 import {
   IoHeartOutline,
@@ -174,20 +175,22 @@ const PostPage = () => {
         </div>
         <IoEllipsisHorizontalSharp className="text-lg mr-2 cursor-pointer" />
       </div>
-      {/* <div className="w-full h-full bg-neutral-200 min-h-80 flex items-center justify-center max-h-xl">
-        <img
-          src={postData.media ?? ""}
-          alt=""
-          className="w-full  h-full max-h-xl max-w-xl  object-contain"
-        />
-      </div> */}
-      <div className=" w-full  h-128 flex items-center justify-center bg-neutral-200">
-        <img
-          src={postData.media ?? ""}
-          alt=""
-          className="h-full object-contain"
-        />
+      <div className="px-3 py-2">
+        <VibeBadge vibeType={postData.vibeType} />
       </div>
+      {postData.media ? (
+        <div className="flex h-128 w-full items-center justify-center bg-neutral-200">
+          <img
+            src={postData.media}
+            alt={postData.caption || "Post"}
+            className="h-full object-contain"
+          />
+        </div>
+      ) : (
+        <div className="min-h-64 whitespace-pre-wrap bg-purple-50 p-8 text-xl text-gray-800">
+          {postData.caption}
+        </div>
+      )}
 
       <div className="p-3">
         <div className="flex items-center justify-between text-2xl">
@@ -211,9 +214,11 @@ const PostPage = () => {
           <IoBookmarkOutline className="cursor-pointer hover:opacity-50" />
         </div>
         <div className="">{postData.likeCount} likes</div>
-        <div className="text-sm my-2">
-          <pre>{postData.caption}</pre>
-        </div>
+        {postData.media && postData.caption && (
+          <div className="my-2 whitespace-pre-wrap text-sm">
+            {postData.caption}
+          </div>
+        )}
         <p
           className="my-2 text-neutral-400 text-sm uppercase"
           style={{ fontSize: 12 }}
